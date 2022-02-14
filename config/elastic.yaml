@@ -1,0 +1,5 @@
+elastic:
+  host: https://172.19.31.75:9200
+  username: elastic
+  password: EuVt9rRDLEnv2f6XwHTW
+  cert_path: cert/ca/ca.crt
