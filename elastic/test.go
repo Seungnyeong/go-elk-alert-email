@@ -3,6 +3,16 @@ package elastic
 var FailedKeys []*FailedKey
 
 
+type FailedKey struct {
+	Username 		string
+	Key      		string
+	SourceIP		string
+	DestinationIP	string
+	Type			string
+	Category		string
+	FailedCount     int
+}
+
 func AddFailedKey(username, key, src_ip, dest_ip, actionType, category string) {
 	FailedKey := &FailedKey{
 		Username: username,
