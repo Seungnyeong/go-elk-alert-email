@@ -45,16 +45,27 @@ func getUser(c echo.Context) error {
 
 
 
-// @Summary Create user
-// @Description Create new user
+// @Summary Get All Job
+// @Description Get ALL Jonbs
 // @Accept json
 // @Produce json
 // @Param userBody body User true "User Info Body"
-// @Success 200 {object} User
-// @Router /user [post]
+// @Success 200 {object} instance
+// @Router /user [get]
+func getAllInstance(c echo.Context) error {
+	return c.JSONPretty(http.StatusOK, elastic.GetSingleton().AllInstance(), " ")
+}
+
+// @Summary Get All Job
+// @Description Get ALL Jonbs
+// @Accept json
+// @Produce json
+// @Param userBody body User true "User Info Body"
+// @Success 200 {object} instance
+// @Router /user [get]
 func startJob(c echo.Context) error {
-	elastic.InitInstance().Start()
-	return c.JSONPretty(http.StatusOK, "", " ")
+	elastic.CronJob()
+	return c.JSONPretty(http.StatusOK, "test", " ")
 }
 
 // @Summary Create user
@@ -84,6 +95,7 @@ func Start() {
 
 	e.GET("/api/v1/user/:name", getUser)
 	e.POST("/api/v1/user", createUser)
+	e.GET("/api/job/instance", getAllInstance)
 	e.GET("/api/job/start", startJob)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 

@@ -25,17 +25,13 @@ type KeyInfo struct {
 
 func GetKeysWithUser() {
 	var connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true", user, password, host, database)
-
+	
 	db, err := sql.Open("mysql", connectionString)	
 	utils.CheckError(err)
 	defer db.Close()
 
 	err = db.Ping()
 	utils.CheckError(err)
-	fmt.Println("connect sucess")
-
-	
-	
 
 	rows, err := db.Query("select username, email, k.key from auth_user left join keyinfo k on auth_user.id = k.user_id")
 	utils.CheckError(err)

@@ -1,8 +1,10 @@
 package main
 
-import "test/elastic"
+import (
+	"test/swagger"
+)
 
 
 func main() {
-	elastic.InitInstance().Start()
+	swagger.Start()
 }
