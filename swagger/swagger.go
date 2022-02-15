@@ -3,6 +3,7 @@ package swagger
 import (
 	"net/http"
 	_ "test/docs"
+	"test/elastic"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -42,6 +43,20 @@ func getUser(c echo.Context) error {
 	return c.JSONPretty(http.StatusBadRequest, defaultUser, " ")
 }
 
+
+
+// @Summary Create user
+// @Description Create new user
+// @Accept json
+// @Produce json
+// @Param userBody body User true "User Info Body"
+// @Success 200 {object} User
+// @Router /user [post]
+func startJob(c echo.Context) error {
+	elastic.InitInstance().Start()
+	return c.JSONPretty(http.StatusOK, "", " ")
+}
+
 // @Summary Create user
 // @Description Create new user
 // @Accept json
@@ -69,7 +84,7 @@ func Start() {
 
 	e.GET("/api/v1/user/:name", getUser)
 	e.POST("/api/v1/user", createUser)
-
+	e.GET("/api/job/start", startJob)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.Logger.Fatal(e.Start(":30000"))

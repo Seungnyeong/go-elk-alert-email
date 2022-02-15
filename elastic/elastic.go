@@ -5,19 +5,29 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
-	"os"
-	"strconv"
+	"strings"
 	"test/utils"
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v7"
 )
-
+var eo = new(ElasticOutPut)
+var a = [3]string{"wkms", "wkmsdb", "wkmshttp"}
+type ElasticOutPut struct {
+	zone  string
+	hostname string
+	timestamp string
+	ip		string
+	status	string
+	port	string
+	name	string
+}
 
 
 func ElasticConnection() (*elasticsearch.Client, error ){
-	cert, err := os.ReadFile("cert/ca/ca.crt")
+	cert, err := ioutil.ReadFile("cert/ca/ca.crt")
 	utils.CheckError(err)
 	cfg := elasticsearch.Config{
 		Addresses: []string{
@@ -56,10 +66,12 @@ func elasticQuery(monitorId string) bytes.Buffer {
 	return query
 }
 
-func getInstanceStatus(es *elasticsearch.Client, r map[string]interface{}, agentId string) string {
-	var down string
+func getInstanceStatus(es *elasticsearch.Client, agentId string) *ElasticOutPut {
+	var (
+		r map[string]interface{}
+	)
+
 	query := elasticQuery(agentId)
-		time.Sleep(5 * time.Second)
 		res, err := es.Search(
 			es.Search.WithContext(context.Background()),
 			es.Search.WithIndex("wmp-wkms-health-*"),
@@ -88,42 +100,26 @@ func getInstanceStatus(es *elasticsearch.Client, r map[string]interface{}, agent
 		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
 			log.Fatalf("Error parsing the response body: %s", err)
 		}
-		var instance *instance
+		
 		for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
 			_source := hit.(map[string]interface{})["_source"]
-			summary := _source.(map[string]interface{})["summary"]
 			monitor := _source.(map[string]interface{})["monitor"]
 			observer := _source.(map[string]interface{})["observer"]
-			zone := fmt.Sprintf("%s", observer.(map[string]interface{})["geo"].(map[string]interface{})["name"])
-			hostname := fmt.Sprintf("%s",observer.(map[string]interface{})["hostname"])
-			timestamp := fmt.Sprintf("%s", _source.(map[string]interface{})["@timestamp"])
-			ip := fmt.Sprintf("%s", monitor.(map[string]interface{})["ip"])
-			status := fmt.Sprintf("%s", monitor.(map[string]interface{})["status"])
-			port, _ := strconv.Atoi(fmt.Sprintf("%f", _source.(map[string]interface{})["url"].(map[string]interface{})["port"]))
-			down = fmt.Sprintf("%v",summary.(map[string]interface{})["down"])
-			name := fmt.Sprintf("%s", monitor.(map[string]interface{})["name"])
-			fmt.Println(ip, status, zone, port, timestamp, hostname, name)
-			if !FindInstance(name) {
-				instance = CreateInstance(ip, hostname, zone, timestamp, name, status, port)
-			}
-			
-			if instance != nil {
-				i.AddInstance(instance)
-			}
-
+			eo.zone = fmt.Sprintf("%s", observer.(map[string]interface{})["geo"].(map[string]interface{})["name"])
+			eo.hostname = fmt.Sprintf("%s",observer.(map[string]interface{})["hostname"])
+			eo.timestamp = fmt.Sprintf("%s", _source.(map[string]interface{})["@timestamp"])
+			eo.ip = fmt.Sprintf("%s", monitor.(map[string]interface{})["ip"])
+			eo.status = fmt.Sprintf("%s", monitor.(map[string]interface{})["status"])
+			eo.port = strings.Split(fmt.Sprintf("%f", _source.(map[string]interface{})["url"].(map[string]interface{})["port"]), ".")[0]
+			eo.name = fmt.Sprintf("%s", monitor.(map[string]interface{})["name"])
 		}	
+
 		defer res.Body.Close()
-		fmt.Println(i)
-		return down
+		return eo
 }
 
-func Start() {
+func (i *instances) Start() {
 	log.SetFlags(0)
-	i = InitInstance()
-	var (
-		r map[string]interface{}
-	)
-
 	es, _ := ElasticConnection()
 	res, err := es.Info()
 	utils.CheckError(err)
@@ -133,12 +129,18 @@ func Start() {
 		log.Fatalf("Error: %s", res.String())
 	}
 	
+	var instance *serverInfo
 	for {
-		nginx := getInstanceStatus(es, r, "wkmshttp")
-		uwsgi := getInstanceStatus(es, r, "wkms")
-		mysql := getInstanceStatus(es, r, "wkmsdb")
-		fmt.Printf("[Status Nginx] : %s\n",nginx)
-		fmt.Printf("[Status uwsgi] : %s\n",uwsgi)
-		fmt.Printf("[Status mysql] : %s\n",mysql)
-	}
+			time.Sleep(3 * time.Second)	
+			t := getInstanceStatus(es, a[0])
+			if !FindInstance(fmt.Sprintf("%s:%s", t.ip, t.port)) {
+				instance = CreateInstance(t.ip, t.hostname, t.zone, t.timestamp, t.name, t.status, t.port)
+				i.AddInstance(instance)
+			}
+			update , err := GetInstance(fmt.Sprintf("%s:%s", t.ip, t.port))
+			utils.CheckError(err)
+			update.UpdateInstance(t.status, t.timestamp)
+			fmt.Println(i)
+		}
+	
 }

@@ -33,7 +33,7 @@ const docTemplate_swagger = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.User"
+                            "$ref": "#/definitions/swagger.User"
                         }
                     }
                 ],
@@ -41,7 +41,7 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.User"
+                            "$ref": "#/definitions/swagger.User"
                         }
                     }
                 }
@@ -70,7 +70,7 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.User"
+                            "$ref": "#/definitions/swagger.User"
                         }
                     }
                 }
@@ -78,7 +78,7 @@ const docTemplate_swagger = `{
         }
     },
     "definitions": {
-        "main.User": {
+        "swagger.User": {
             "type": "object",
             "properties": {
                 "age": {
@@ -94,11 +94,11 @@ const docTemplate_swagger = `{
 
 // SwaggerInfo_swagger holds exported Swagger Info so clients can modify it
 var SwaggerInfo_swagger = &swag.Spec{
-	Version:          "1.0",
-	Host:             "localhost:30000",
-	BasePath:         "/api/v1",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Wookiist Sample Swagger API",
+	Title:            "",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate_swagger,

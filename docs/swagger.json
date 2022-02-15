@@ -1,12 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Wookiist Sample Swagger API",
-        "contact": {},
-        "version": "1.0"
+        "contact": {}
     },
-    "host": "localhost:30000",
-    "basePath": "/api/v1",
     "paths": {
         "/user": {
             "post": {
@@ -25,7 +21,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.User"
+                            "$ref": "#/definitions/swagger.User"
                         }
                     }
                 ],
@@ -33,7 +29,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.User"
+                            "$ref": "#/definitions/swagger.User"
                         }
                     }
                 }
@@ -62,7 +58,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.User"
+                            "$ref": "#/definitions/swagger.User"
                         }
                     }
                 }
@@ -70,7 +66,7 @@
         }
     },
     "definitions": {
-        "main.User": {
+        "swagger.User": {
             "type": "object",
             "properties": {
                 "age": {

@@ -1,17 +1,13 @@
-basePath: /api/v1
 definitions:
-  main.User:
+  swagger.User:
     properties:
       age:
         type: integer
       name:
         type: string
     type: object
-host: localhost:30000
 info:
   contact: {}
-  title: Wookiist Sample Swagger API
-  version: "1.0"
 paths:
   /user:
     post:
@@ -24,14 +20,14 @@ paths:
         name: userBody
         required: true
         schema:
-          $ref: '#/definitions/main.User'
+          $ref: '#/definitions/swagger.User'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.User'
+            $ref: '#/definitions/swagger.User'
       summary: Create user
   /user/{name}:
     get:
@@ -50,6 +46,6 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.User'
+            $ref: '#/definitions/swagger.User'
       summary: Get user
 swagger: "2.0"

@@ -1,6 +1,8 @@
 package elastic
 
 import (
+	"errors"
+	"fmt"
 	"sync"
 )
 
@@ -8,29 +10,30 @@ var once sync.Once
 var i *instances
 
 type instances struct {
-	server []instance
+	server []serverInfo
 }
 
-type instance struct {
-	Ip 		 string  	`json"ip"`
-	Hostname string		`json"hostname"`
-	Port 	 int		`json"port"`
-	Status   string  	`json"status"`
-	Zone	 string  	`json"zone"`
-	Timestamp string  	`json"timestamp"`
-	Name string 		`json"name"`
+type serverInfo struct {
+	key      string
+	ip 		 string  	
+	hostname string		
+	port 	 string		
+	status   string  	
+	zone	 string  	
+	timestamp string  	
+	name string 		
 }
+var ErrNotFound = errors.New("not found")
 
-
-func (i *instances) AddInstance( instance *instance) {
+func (i *instances) AddInstance(instance *serverInfo) {
 	i.server = append(i.server, *instance)
 }
 
-func FindInstance(name string) bool {
+func FindInstance(key string) bool {
 	check := false
 	Outer:
 		for _, instance := range(i.server) {
-			if instance.Name == name {
+			if instance.key == key {
 				check = true
 				break Outer
 			}
@@ -38,15 +41,31 @@ func FindInstance(name string) bool {
 	return check
 }
 
-func CreateInstance(ip, hostname, zone, timestamp, name, status string, port int) *instance {
-	return &instance{
-		Ip : ip,
-		Name: name,
-		Hostname:  hostname,
-		Port : port,
-		Status : status,
-		Zone : zone,
-		Timestamp: timestamp,
+
+func GetInstance(key string) (*serverInfo, error) {
+	for _ , server := range i.server {
+		if server.key == key {
+			return &server, nil
+		}
+	}
+	return nil, ErrNotFound
+}
+
+func (s *serverInfo) UpdateInstance(status, timestamp string) {
+	s.status = status
+	s.timestamp = timestamp
+}
+
+func CreateInstance(ip, hostname, zone, timestamp, name, status, port string) *serverInfo {
+	return &serverInfo{
+		key : fmt.Sprintf("%s:%s", ip, port),
+		ip : ip,
+		name: name,
+		hostname:  hostname,
+		port : port,
+		status : status,
+		zone : zone,
+		timestamp: timestamp,
 	}
 }
 

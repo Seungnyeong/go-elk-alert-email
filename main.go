@@ -1,10 +1,8 @@
 package main
 
-import (
-	"test/elastic"
-)
+import "test/elastic"
 
 
 func main() {
-	elastic.Start()
+	elastic.InitInstance().Start()
 }
