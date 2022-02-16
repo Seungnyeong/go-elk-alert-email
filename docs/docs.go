@@ -17,7 +17,7 @@ const docTemplate_swagger = `{
             "email": "seungnyeong@wemakeprice.com"
         },
         "license": {
-            "name": "Apache 2.0",
+            "name": "위메프 CERT팀 제공",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "{{.Version}}"
@@ -62,7 +62,7 @@ const docTemplate_swagger = `{
                             "type": "string"
                         },
                         "description": "Start Cron Job",
-                        "name": "agentId",
+                        "name": "monitorId",
                         "in": "query",
                         "required": true
                     }
@@ -82,6 +82,9 @@ const docTemplate_swagger = `{
         "elastic.Instance": {
             "type": "object",
             "properties": {
+                "downcount": {
+                    "type": "integer"
+                },
                 "hostname": {
                     "type": "string"
                 },

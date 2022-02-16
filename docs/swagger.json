@@ -10,7 +10,7 @@
             "email": "seungnyeong@wemakeprice.com"
         },
         "license": {
-            "name": "Apache 2.0",
+            "name": "위메프 CERT팀 제공",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "1.0"
@@ -55,7 +55,7 @@
                             "type": "string"
                         },
                         "description": "Start Cron Job",
-                        "name": "agentId",
+                        "name": "monitorId",
                         "in": "query",
                         "required": true
                     }
@@ -75,6 +75,9 @@
         "elastic.Instance": {
             "type": "object",
             "properties": {
+                "downcount": {
+                    "type": "integer"
+                },
                 "hostname": {
                     "type": "string"
                 },

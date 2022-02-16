@@ -2,6 +2,8 @@ basePath: /api/v1
 definitions:
   elastic.Instance:
     properties:
+      downcount:
+        type: integer
       hostname:
         type: string
       ip:
@@ -27,7 +29,7 @@ info:
     url: http://stash.wemakeprice.com
   description: wkms alert 서버입니다.
   license:
-    name: Apache 2.0
+    name: 위메프 CERT팀 제공
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
   title: wkms-alert
@@ -56,7 +58,7 @@ paths:
         in: query
         items:
           type: string
-        name: agentId
+        name: monitorId
         required: true
         type: array
       produces:

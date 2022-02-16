@@ -12,10 +12,9 @@ import (
 
 var ErrCannotExcute = errors.New("cannot excute job for cron")
 
-func Job(agentId []string) error {
+func Job(monitorId []string) error {
 	GetSingleton()
 	es, _ := ElasticConnection()
-	
 	res, err := es.Info()
 	utils.CheckError(err)
 	defer res.Body.Close()
@@ -24,7 +23,7 @@ func Job(agentId []string) error {
 		log.Fatalf("Error: %s", res.String())
 	}
 	
-	for _, name := range agentId {
+	for _, name := range monitorId {
 		result := elsticResult(es, name)
 		if !FindInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port)) {
 			is.AddInstance(result)		
@@ -32,6 +31,7 @@ func Job(agentId []string) error {
 			a, err := is.GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port))
 			utils.CheckError(err)
 			a.UpdateIntance(result.Status, utils.RFCtoKST(result.Timestamp))
+			CheckDowncount(a)
 		}
 	}
 
@@ -42,10 +42,10 @@ func Job(agentId []string) error {
 	return err
 }
 
-func CronJob(agentId []string) error {
+func CronJob(monitorId []string) error {
 	s := gocron.NewScheduler(time.UTC)
 	_, err := s.SingletonMode().Every(5).Second().Do(func ()  {
-		Job(agentId)
+		Job(monitorId)
 	})
 	if err != nil {
 		err = ErrCannotExcute

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"test/mail"
 	"test/utils"
 )
 
@@ -26,6 +27,7 @@ type Instance struct {
 	Zone	 	string `json:"zone"`
 	Timestamp 	string `json:"timestamp"`
 	Name 		string `json:"name"`
+	Downcount	int	   `json:"downcount"`
 }
 
 func (is *instances) AddInstance(i Instance) {
@@ -54,6 +56,7 @@ func createInstance(i Instance) *Instance {
 		Zone : i.Zone,
 		Timestamp: utils.RFCtoKST(i.Timestamp),
 		Name : i.Name,
+		Downcount: 0,
 	}
 	return &newInstance
 }
@@ -61,8 +64,24 @@ func createInstance(i Instance) *Instance {
 func (i *Instance) UpdateIntance(status, timestamp string) {
 	i.Status = status
 	i.Timestamp = timestamp
+	if status == "down" {
+		i.Downcount++
+	} 
 }
 
+func (i *Instance) UpdateIntanceDownCount(count int) {
+	i.Downcount = 0
+}
+
+func CheckDowncount (i *Instance)  {
+	if i.Downcount > 10 {
+		fmt.Printf("[DOWN] %s\n [%s]", i.Name, i.Key)
+		mailing := mail.MailForAdmin(i)
+		if mailing {
+			i.UpdateIntanceDownCount(0)
+		}
+	}
+}
 
 func (is *instances) AllInstance() []*Instance {
 	return is.server
