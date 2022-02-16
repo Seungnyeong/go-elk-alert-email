@@ -6,4 +6,5 @@ import "test/mail"
 func main() {
 	//swagger.SwaggerStart()
 	mail.SendMail()
+	//mail.MakeTemplate()
 }
