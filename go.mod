@@ -15,6 +15,7 @@ require (
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-co-op/gocron v1.12.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
+	github.com/julvo/htmlgo v0.0.0-20200505154053-2e9f4b95a223 // indirect
 	github.com/labstack/echo v3.3.10+incompatible // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect

@@ -10,6 +10,7 @@ import (
 const (
 	mailDial string = "wemakeprice-com.mail.protection.outlook.com:25"
 	fromAddress string = "wkms@wemakeprice.com"
+	mimeString string = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 )
 
 var (
@@ -47,7 +48,10 @@ func SendMail(){
 		log.Fatal(err)
 	}
 	defer wc.Close()
-	buf := bytes.NewBufferString("subject: this is Subject\n\n <h1>this is the body</h1>\n")
+	subject := "Subject: Test email from Go!\n"
+	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+	body := "<html><body><h1>Hello World!</h1></body></html>"
+	buf := bytes.NewBufferString(subject + mime + body)
 	if _, err = buf.WriteTo(wc); err != nil {
 		log.Fatal(err)
 	}
