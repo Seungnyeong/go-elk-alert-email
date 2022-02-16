@@ -1,6 +1,7 @@
 package elastic
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"test/utils"
@@ -9,7 +10,9 @@ import (
 	"github.com/go-co-op/gocron"
 )
 
-func Job(agentId []string) {
+var ErrCannotExcute = errors.New("cannot excute job for cron")
+
+func Job(agentId []string) error {
 	GetSingleton()
 	es, _ := ElasticConnection()
 	
@@ -28,18 +31,25 @@ func Job(agentId []string) {
 		} else {
 			a, err := is.GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port))
 			utils.CheckError(err)
-			a.UpdateIntance(result.Status, result.Timestamp)
+			a.UpdateIntance(result.Status, utils.RFCtoKST(result.Timestamp))
 		}
 	}
-	fmt.Println(is.AllInstance()[0])
-	
+
+	if err != nil {
+		err = ErrCannotExcute
+	}
+
+	return err
 }
 
-func CronJob() {
-	var a = []string{"wkms", "wkmsdb", "wkmshttp"}
+func CronJob(agentId []string) error {
 	s := gocron.NewScheduler(time.UTC)
-	s.SingletonMode().Every(5).Second().Do(func ()  {
-		Job(a)
+	_, err := s.SingletonMode().Every(5).Second().Do(func ()  {
+		Job(agentId)
 	})
+	if err != nil {
+		err = ErrCannotExcute
+	}
 	s.StartAsync()
+	return err
 }

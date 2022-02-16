@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"test/utils"
 )
 
 var (
@@ -15,9 +16,10 @@ type instances struct {
 	server []*Instance
 }
 
+// Instance struct
 type Instance struct {
 	Key      	string `json:"key"`
-	Ip 		 	string `json:"Ip"`
+	Ip 		 	string `json:"ip"`
 	Hostname 	string `json:"hostname"`
 	Port 	 	string `json:"port"`
 	Status   	string `json:"status"`
@@ -50,7 +52,7 @@ func createInstance(i Instance) *Instance {
 		Port : i.Port,
 		Status: i.Status,
 		Zone : i.Zone,
-		Timestamp: i.Timestamp,
+		Timestamp: utils.RFCtoKST(i.Timestamp),
 		Name : i.Name,
 	}
 	return &newInstance

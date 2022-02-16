@@ -10,67 +10,68 @@ const docTemplate_swagger = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "CERT팀 김승녕 매니저",
+            "url": "http://stash.wemakeprice.com",
+            "email": "seungnyeong@wemakeprice.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/user": {
-            "post": {
-                "description": "Create new user",
+        "/job/instance": {
+            "get": {
+                "description": "Get ALL Jonbs",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Create user",
-                "parameters": [
-                    {
-                        "description": "User Info Body",
-                        "name": "userBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/swagger.User"
-                        }
-                    }
-                ],
+                "summary": "Get All Job",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.User"
+                            "$ref": "#/definitions/elastic.Instance"
                         }
                     }
                 }
             }
         },
-        "/user/{name}": {
+        "/job/start": {
             "get": {
-                "description": "Get user's info",
+                "description": "Get ALL Jonbs",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get user",
+                "summary": "Get All Job",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "name of the user",
-                        "name": "name",
-                        "in": "path",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Start Cron Job",
+                        "name": "agentId",
+                        "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "job ok",
                         "schema": {
-                            "$ref": "#/definitions/swagger.User"
+                            "type": "string"
                         }
                     }
                 }
@@ -78,13 +79,31 @@ const docTemplate_swagger = `{
         }
     },
     "definitions": {
-        "swagger.User": {
+        "elastic.Instance": {
             "type": "object",
             "properties": {
-                "age": {
-                    "type": "integer"
+                "hostname": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "zone": {
                     "type": "string"
                 }
             }
@@ -94,12 +113,12 @@ const docTemplate_swagger = `{
 
 // SwaggerInfo_swagger holds exported Swagger Info so clients can modify it
 var SwaggerInfo_swagger = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "1.0",
+	Host:             "localhost:8080",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "wkms-alert",
+	Description:      "wkms alert 서버입니다.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate_swagger,
 }

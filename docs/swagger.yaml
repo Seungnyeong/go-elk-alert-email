@@ -1,51 +1,70 @@
+basePath: /api/v1
 definitions:
-  swagger.User:
+  elastic.Instance:
     properties:
-      age:
-        type: integer
+      hostname:
+        type: string
+      ip:
+        type: string
+      key:
+        type: string
       name:
         type: string
+      port:
+        type: string
+      status:
+        type: string
+      timestamp:
+        type: string
+      zone:
+        type: string
     type: object
+host: localhost:8080
 info:
-  contact: {}
+  contact:
+    email: seungnyeong@wemakeprice.com
+    name: CERT팀 김승녕 매니저
+    url: http://stash.wemakeprice.com
+  description: wkms alert 서버입니다.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: wkms-alert
+  version: "1.0"
 paths:
-  /user:
-    post:
-      consumes:
-      - application/json
-      description: Create new user
-      parameters:
-      - description: User Info Body
-        in: body
-        name: userBody
-        required: true
-        schema:
-          $ref: '#/definitions/swagger.User'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/swagger.User'
-      summary: Create user
-  /user/{name}:
+  /job/instance:
     get:
       consumes:
       - application/json
-      description: Get user's info
-      parameters:
-      - description: name of the user
-        in: path
-        name: name
-        required: true
-        type: string
+      description: Get ALL Jonbs
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.User'
-      summary: Get user
+            $ref: '#/definitions/elastic.Instance'
+      summary: Get All Job
+  /job/start:
+    get:
+      consumes:
+      - application/json
+      description: Get ALL Jonbs
+      parameters:
+      - description: Start Cron Job
+        in: query
+        items:
+          type: string
+        name: agentId
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: job ok
+          schema:
+            type: string
+      summary: Get All Job
 swagger: "2.0"
