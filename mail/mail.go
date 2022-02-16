@@ -1,6 +1,7 @@
 package mail
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/smtp"
@@ -8,7 +9,10 @@ import (
 
 const (
 	mailDial string = "wemakeprice-com.mail.protection.outlook.com:25"
-	fromAddress string = "test@wemakeprice.com"
+	fromAddress string = "wkms@wemakeprice.com"
+)
+
+var (
 	toAddress string = "seungnyeong@wemakeprice.com"
 )
 
@@ -21,7 +25,8 @@ func MailForAdmin(i interface{}) bool {
 	return true
 }
 
-func Start(){
+func SendMail(){
+	
 	c, err := smtp.Dial(mailDial)
 	if err != nil {
 		log.Fatal("Error", err)
@@ -41,15 +46,10 @@ func Start(){
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	_, err = fmt.Fprintf(wc, "This is the email body")
-	if err != nil {
+	defer wc.Close()
+	buf := bytes.NewBufferString("subject: this is Subject\n\n <h1>this is the body</h1>\n")
+	if _, err = buf.WriteTo(wc); err != nil {
 		log.Fatal(err)
 	}
-
-	err = wc.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	
 }
