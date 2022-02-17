@@ -12,7 +12,7 @@ const (
 	database = "keyinfo_nd"
 	user = "secutech"
 	password = "qhdksxla123!@#"
-	host = "127.0.0.1"
+	host = "10.107.12.65"
 )
 
 

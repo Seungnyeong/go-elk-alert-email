@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "test/keyinfo"
 
+func main() {
+	keyinfo.GetKeysWithUser()
 }
