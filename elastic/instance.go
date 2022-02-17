@@ -76,17 +76,7 @@ func (i *Instance) UpdateIntanceDownCount(count int) {
 	i.Downcount = count
 }
 
-func CheckDowncount () bool {
-	down := false
-	for _, server := range is.server {
-		if server.Downcount > 3 {
-			fmt.Println("You have to mail admin")
-			down = true
-			break;
-		}
-	}
-	return down
-}
+
 
 func (is *instances) AllInstance() []*Instance {
 	return is.server

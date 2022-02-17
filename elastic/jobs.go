@@ -14,6 +14,22 @@ import (
 
 var ErrCannotExcute = errors.New("cannot excute job for cron")
 
+func CheckDowncount() bool {
+	down := false
+	for _, server := range is.server {
+		if ( server.Downcount % 10 == 0) && server.Status == "down" {
+			down = true
+			server.UpdateIntanceDownCount(0)
+			break;
+		} 
+
+		if server.Downcount > 0 && server.Status == "up" {
+			server.UpdateIntanceDownCount(0)
+		}
+	}
+	return down
+}
+
 func Job(monitorId []string) error {
 	GetSingleton()
 	es, _ := ElasticConnection()
@@ -38,8 +54,7 @@ func Job(monitorId []string) error {
 	}
 	
 	if CheckDowncount() {
-		c := string(MakeTemplate())
-		mail.SendMail(c)
+		mail.SendMail(string(MakeTemplate()))
 	}	
 
 	if err != nil {
@@ -57,6 +72,7 @@ func CronJob(monitorId []string) error {
 	if err != nil {
 		err = ErrCannotExcute
 	}
-	s.StartAsync()
+	s.StartAsync()	
 	return err
 }
+

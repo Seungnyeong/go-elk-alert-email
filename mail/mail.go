@@ -2,6 +2,7 @@ package mail
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/smtp"
 )
@@ -19,6 +20,7 @@ var (
 
 
 func SendMail(html string){
+	fmt.Println("sending email")
 	buf := bytes.NewBufferString(subject + mimeString + html)
 	
 	c, err := smtp.Dial(mailDial)
