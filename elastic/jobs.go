@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+
+	"test/mail"
 	"test/utils"
 	"time"
 
@@ -28,12 +30,17 @@ func Job(monitorId []string) error {
 		if !FindInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port)) {
 			is.AddInstance(result)		
 		} else {
-			a, err := is.GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port))
+			i, err := is.GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port))
 			utils.CheckError(err)
-			a.UpdateIntance(result.Status, utils.RFCtoKST(result.Timestamp))
-			CheckDowncount(a)
+			i.UpdateIntance(result.Status, utils.RFCtoKST(result.Timestamp))
+			
 		}
 	}
+	
+	if CheckDowncount() {
+		c := string(MakeTemplate())
+		mail.SendMail(c)
+	}	
 
 	if err != nil {
 		err = ErrCannotExcute

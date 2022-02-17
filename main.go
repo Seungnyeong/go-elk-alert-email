@@ -1,10 +1,8 @@
 package main
 
-import "test/mail"
+import "test/swagger"
 
 
 func main() {
-	//swagger.SwaggerStart()
-	mail.SendMail()
-	//mail.MakeTemplate()
+	swagger.SwaggerStart()
 }

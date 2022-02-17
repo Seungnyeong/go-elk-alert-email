@@ -2,7 +2,6 @@ package mail
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/smtp"
 )
@@ -18,16 +17,9 @@ var (
 	toAddress string = "seungnyeong@wemakeprice.com"
 )
 
-func MailForAdmin(i interface{}) bool {
-	fmt.Println("mail to admin")
-	if true {
-		fmt.Println(i)
-	}
 
-	return true
-}
-
-func SendMail(){
+func SendMail(html string){
+	buf := bytes.NewBufferString(subject + mimeString + html)
 	
 	c, err := smtp.Dial(mailDial)
 	if err != nil {
@@ -49,7 +41,7 @@ func SendMail(){
 		log.Fatal(err)
 	}
 	defer wc.Close()
-	buf := bytes.NewBufferString(subject + mimeString + string(MakeTemplate()))
+	
 	if _, err = buf.WriteTo(wc); err != nil {
 		log.Fatal(err)
 	}

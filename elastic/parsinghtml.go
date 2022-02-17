@@ -1,9 +1,12 @@
-package mail
+package elastic
 
 import (
+	"fmt"
+
 	. "github.com/julvo/htmlgo"
 	a "github.com/julvo/htmlgo/attributes"
 )
+
 
 const style string = `*{
     box-sizing: border-box;
@@ -157,6 +160,19 @@ span {
 `
 
 func MakeTemplate() HTML  {
+    var results HTML
+    for _, server := range is.AllInstance() {
+        results += Tr_(
+            Td_(Text(server.Timestamp)),
+            Td_(Text(server.Status)),
+            Td_(Text(server.Name)),
+            Td_(Text(server.Ip)),
+            Td_(Text(server.Port)),
+            Td_(Text(server.Zone)),
+            Td_(Text(server.Hostname)),
+        )
+    }
+
     page :=
         Html5_(
             Head_(
@@ -180,13 +196,7 @@ func MakeTemplate() HTML  {
                             Th_("Hostname")),
                     ),
                     Tbody_(
-                        Td_("2022-02-16 13:13:54.334 +0900 KST"),
-                        Td_("Down"),
-                        Td_("WKMS Monitor (uwsgi)"),
-                        Td_("10.107.12.65"),
-                        Td_("9090"),
-                        Td_("dev-zone"),
-                        Td_("app01a"),
+                        results,
                     ),
                 )),
                     A(Attr(a.Href("https://wmp-siem.wemakeprice.work/app/uptime?dateRangeStart=now-24h&dateRangeEnd=now")), Text("보안팀 SIEM 이동")),
@@ -194,5 +204,6 @@ func MakeTemplate() HTML  {
                 ),
                 Style_(Text(style)),
             )
+    fmt.Println(page)
     return page
 }

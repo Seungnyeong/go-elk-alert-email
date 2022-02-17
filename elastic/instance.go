@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	"test/mail"
+
 	"test/utils"
 )
 
@@ -16,6 +16,9 @@ var (
 type instances struct {
 	server []*Instance
 }
+
+var DownInstance map[string]*Instance
+
 
 // Instance struct
 type Instance struct {
@@ -70,17 +73,19 @@ func (i *Instance) UpdateIntance(status, timestamp string) {
 }
 
 func (i *Instance) UpdateIntanceDownCount(count int) {
-	i.Downcount = 0
+	i.Downcount = count
 }
 
-func CheckDowncount (i *Instance)  {
-	if i.Downcount > 10 {
-		fmt.Printf("[DOWN] %s\n [%s]", i.Name, i.Key)
-		mailing := mail.MailForAdmin(i)
-		if mailing {
-			i.UpdateIntanceDownCount(0)
+func CheckDowncount () bool {
+	down := false
+	for _, server := range is.server {
+		if server.Downcount > 3 {
+			fmt.Println("You have to mail admin")
+			down = true
+			break;
 		}
 	}
+	return down
 }
 
 func (is *instances) AllInstance() []*Instance {
