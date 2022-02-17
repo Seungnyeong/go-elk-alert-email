@@ -40,6 +40,7 @@ func StartJob(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, fmt.Sprintf("%s start", c.QueryParams().Get("monitorId") ), "\t")
 }
 
+
 // @title           wkms-alert
 // @version         1.0
 // @description     wkms alert 서버입니다.
@@ -61,6 +62,7 @@ func SwaggerStart() {
 
 	e.GET("/api/v1/job/instance", GetAllInstance)
 	e.GET("/api/v1/job/start", StartJob)
+
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.Logger.Fatal(e.Start(":8080"))
