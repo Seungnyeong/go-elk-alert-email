@@ -1,7 +1,10 @@
 package main
 
-import "test/keyinfo"
+import "test/swagger"
+
+
+
 
 func main() {
-	keyinfo.GetKeysWithUser()
+	swagger.SwaggerStart()
 }

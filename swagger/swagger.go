@@ -6,6 +6,7 @@ import (
 	"strings"
 	_ "test/docs"
 	"test/elastic"
+	"test/keyinfo/service"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -40,6 +41,29 @@ func StartJob(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, fmt.Sprintf("%s start", c.QueryParams().Get("monitorId") ), "\t")
 }
 
+// @Summary 관리자 전체 조회
+// @Description 관리자 전체 조회
+// @Accept json
+// @Produce json
+// @Success 200 {string} string "job ok"
+// @Router /users/list [get]
+func GetUserList(c echo.Context) error {
+	return c.JSONPretty(http.StatusOK, service.NewUserRepository().FindAdminUser(), "\t")
+}
+
+// @Summary 사용자 조회
+// @Description username을 입력하세요
+// @Accept json
+// @Produce json
+// @Param username path string true "Get One User"
+// @Success 200 {string} string "job ok"
+// @Router /users/{username} [get]
+func GetUser(c echo.Context) error {
+	username := c.Param("username")
+	fmt.Println(username)
+	return c.JSONPretty(http.StatusOK, service.NewUserRepository().FindUser(username), "\t")
+}
+
 
 // @title           wkms-alert
 // @version         1.0
@@ -62,6 +86,8 @@ func SwaggerStart() {
 
 	e.GET("/api/v1/job/instance", GetAllInstance)
 	e.GET("/api/v1/job/start", StartJob)
+	e.GET("/api/v1/users/list", GetUserList)
+	e.GET("/api/v1/users/:username", GetUser)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 

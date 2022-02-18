@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/smtp"
+	"test/keyinfo/service"
 )
 
 const (
@@ -14,12 +15,10 @@ const (
 	subject string = "Subject: [중요] WKMS health check alert \n"
 )
 
-var (
-	toAddress string = "seungnyeong@wemakeprice.com"
-)
-
 
 func SendMail(html string){
+	user := service.NewUserRepository().FindUser("seungnyeong")
+
 	fmt.Println("sending email")
 	buf := bytes.NewBufferString(subject + mimeString + html)
 	
@@ -34,7 +33,7 @@ func SendMail(html string){
 		log.Fatal(err)
 	}
 
-	if err := c.Rcpt(toAddress); err != nil {
+	if err := c.Rcpt(user.Email); err != nil {
 		log.Fatal(err)
 	}
 

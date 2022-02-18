@@ -27,7 +27,7 @@ const docTemplate_swagger = `{
     "paths": {
         "/job/instance": {
             "get": {
-                "description": "Get ALL Jonbs",
+                "description": "현재 실행되고 있는 잡을 알수있음.",
                 "consumes": [
                     "application/json"
                 ],
@@ -47,14 +47,14 @@ const docTemplate_swagger = `{
         },
         "/job/start": {
             "get": {
-                "description": "Get ALL Jonbs",
+                "description": "monitor.id를 입력하세요",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get All Job",
+                "summary": "Job 스케줄 실행",
                 "parameters": [
                     {
                         "type": "array",
@@ -64,6 +64,55 @@ const docTemplate_swagger = `{
                         "description": "Start Cron Job",
                         "name": "monitorId",
                         "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "job ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/list": {
+            "get": {
+                "description": "관리자 전체 조회",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "관리자 전체 조회",
+                "responses": {
+                    "200": {
+                        "description": "job ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{username}": {
+            "get": {
+                "description": "username을 입력하세요",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "사용자 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Get One User",
+                        "name": "username",
+                        "in": "path",
                         "required": true
                     }
                 ],

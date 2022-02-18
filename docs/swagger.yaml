@@ -39,7 +39,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get ALL Jonbs
+      description: 현재 실행되고 있는 잡을 알수있음.
       produces:
       - application/json
       responses:
@@ -52,7 +52,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get ALL Jonbs
+      description: monitor.id를 입력하세요
       parameters:
       - description: Start Cron Job
         in: query
@@ -68,5 +68,37 @@ paths:
           description: job ok
           schema:
             type: string
-      summary: Get All Job
+      summary: Job 스케줄 실행
+  /users/{username}:
+    get:
+      consumes:
+      - application/json
+      description: username을 입력하세요
+      parameters:
+      - description: Get One User
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: job ok
+          schema:
+            type: string
+      summary: 사용자 조회
+  /users/list:
+    get:
+      consumes:
+      - application/json
+      description: 관리자 전체 조회
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: job ok
+          schema:
+            type: string
+      summary: 관리자 전체 조회
 swagger: "2.0"

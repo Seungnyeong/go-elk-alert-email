@@ -1,0 +1,82 @@
+package db
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+
+	"test/keyinfo/domain"
+	"test/utils"
+	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
+const (
+	database = "keyinfo_nd"
+	user = "secutech"
+	password = "qhdksxla123!@#"
+	host = "10.107.12.65"
+)
+
+
+type DataBase interface {
+	FindAdminUser() ([]domain.User, error)
+	FindUser(username string) (domain.User, error)
+}
+
+type MySqlConnection struct {
+   url string
+}
+
+func NewMySqlConnection(url string) *MySqlConnection {
+	return &MySqlConnection{url}
+}
+
+
+type MysqlDatabase struct {
+   client *sql.DB
+}
+
+
+func NewMysqlDatabase() *MysqlDatabase {
+    var connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true", user, password, host, database)
+	client, err := sql.Open("mysql", connectionString)	
+	if err != nil {
+		utils.CheckError(err)
+	}
+
+	client.SetConnMaxLifetime(time.Minute * 3)
+	client.SetMaxOpenConns(10)
+	client.SetMaxIdleConns(10)
+	return &MysqlDatabase{client}
+}
+
+func (ms MysqlDatabase) FindAdminUser() ([]domain.User, error) {
+	users := make([]domain.User, 0)
+	rows, err := ms.client.Query("select username, email, is_superuser, is_active from auth_user where is_superuser = true AND is_active = true")
+	utils.CheckError(err)
+	defer ms.client.Close()
+
+	for rows.Next() {
+		var user domain.User
+		err := rows.Scan(&user.Username, &user.Email, &user.IsSuperUser, &user.IsActive)
+		if err != nil {
+			log.Fatal("Error while scanning keyinfo " + err.Error())
+			return nil, err
+		}
+
+		users = append(users, user)
+
+	}
+	return users, nil
+}
+
+func (ms MysqlDatabase) FindUser(username string) (domain.User, error) {
+	row := ms.client.QueryRow("select username, email, is_superuser, is_active from auth_user where username = ?", username)
+	var user domain.User
+	err := row.Scan(&user.Username, &user.Email, &user.IsSuperUser, &user.IsActive)
+	utils.CheckError(err)
+	defer ms.client.Close()
+	return user, err
+}
