@@ -6,5 +6,5 @@ import "test/swagger"
 
 
 func main() {
-	swagger.SwaggerStart()
+	swagger.SwaggerStart()	
 }

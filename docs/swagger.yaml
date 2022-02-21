@@ -52,15 +52,13 @@ paths:
     get:
       consumes:
       - application/json
-      description: monitor.id를 입력하세요
+      description: ipv4를 입력하세요
       parameters:
       - description: Start Cron Job
         in: query
-        items:
-          type: string
-        name: monitorId
+        name: ipv4
         required: true
-        type: array
+        type: string
       produces:
       - application/json
       responses:

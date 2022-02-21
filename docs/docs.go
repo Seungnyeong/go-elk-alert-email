@@ -47,7 +47,7 @@ const docTemplate_swagger = `{
         },
         "/job/start": {
             "get": {
-                "description": "monitor.id를 입력하세요",
+                "description": "ipv4를 입력하세요",
                 "consumes": [
                     "application/json"
                 ],
@@ -57,12 +57,9 @@ const docTemplate_swagger = `{
                 "summary": "Job 스케줄 실행",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
+                        "type": "string",
                         "description": "Start Cron Job",
-                        "name": "monitorId",
+                        "name": "ipv4",
                         "in": "query",
                         "required": true
                     }

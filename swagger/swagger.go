@@ -3,10 +3,11 @@ package swagger
 import (
 	"fmt"
 	"net/http"
-	"strings"
+	"test/crons"
 	_ "test/docs"
 	"test/elastic"
 	"test/keyinfo/service"
+	"test/utils"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -24,21 +25,25 @@ func GetAllInstance(c echo.Context) error {
 }
 
 // @Summary Job 스케줄 실행 
-// @Description monitor.id를 입력하세요
+// @Description ipv4를 입력하세요
 // @Accept json
 // @Produce json
-// @Param monitorId query []string true "Start Cron Job"
+// @Param ipv4 query string true "Start Cron Job"
 // @Success 200 {string} string "job ok"
 // @Router /job/start [get]
 func StartJob(c echo.Context) error {
-	// elastic.CronJob()
-	monitorId := strings.Split(c.QueryParams().Get("monitorId"), ",")
-	err := elastic.CronJob(monitorId)
-	if err != nil {
+	if (c.QueryParams().Get("ipv4") != "") {
+		if !utils.CheckIPAddress(c.QueryParams().Get("ipv4")) {
+			return c.JSONPretty(http.StatusBadRequest, fmt.Sprintf("%s is not format ipv4", c.QueryParams().Get("ipv4") ), "\t")
+		}
 
-		return c.JSONPretty(http.StatusBadRequest, err, "\t")	
+		err := crons.MonitorInstanceJob(c.QueryParams().Get("ipv4"))
+		if err != nil {
+			return c.JSONPretty(http.StatusBadRequest, err.Error(), "\t")	
+		}	
+		return c.JSONPretty(http.StatusOK, fmt.Sprintf("%s start", c.QueryParams().Get("ipv4") ), "\t")
 	}
-	return c.JSONPretty(http.StatusOK, fmt.Sprintf("%s start", c.QueryParams().Get("monitorId") ), "\t")
+	return c.JSONPretty(http.StatusBadRequest, "ipv4 Arg cannot be null", "\t")
 }
 
 // @Summary 관리자 전체 조회
@@ -59,8 +64,7 @@ func GetUserList(c echo.Context) error {
 // @Success 200 {string} string "job ok"
 // @Router /users/{username} [get]
 func GetUser(c echo.Context) error {
-	username := c.Param("username")
-	fmt.Println(username)
+	username := c.Param("username")	
 	return c.JSONPretty(http.StatusOK, service.NewUserRepository().FindUser(username), "\t")
 }
 
