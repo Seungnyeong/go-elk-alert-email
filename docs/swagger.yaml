@@ -48,6 +48,8 @@ paths:
           schema:
             $ref: '#/definitions/elastic.Instance'
       summary: Get All Job
+      tags:
+      - 스케줄
   /job/start:
     get:
       consumes:
@@ -67,6 +69,8 @@ paths:
           schema:
             type: string
       summary: Job 스케줄 실행
+      tags:
+      - 스케줄
   /users/{username}:
     get:
       consumes:
@@ -86,6 +90,8 @@ paths:
           schema:
             type: string
       summary: 사용자 조회
+      tags:
+      - 계정
   /users/list:
     get:
       consumes:
@@ -99,4 +105,6 @@ paths:
           schema:
             type: string
       summary: 관리자 전체 조회
+      tags:
+      - 계정
 swagger: "2.0"

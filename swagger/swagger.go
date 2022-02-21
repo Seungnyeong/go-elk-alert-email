@@ -20,6 +20,7 @@ import (
 // @Produce json
 // @Success 200 {object} elastic.Instance
 // @Router /job/instance [get]
+// @Tags   스케줄
 func GetAllInstance(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, elastic.GetSingleton().AllInstance(), " ")
 }
@@ -31,6 +32,7 @@ func GetAllInstance(c echo.Context) error {
 // @Param ipv4 query string true "Start Cron Job"
 // @Success 200 {string} string "job ok"
 // @Router /job/start [get]
+// @Tags   스케줄
 func StartJob(c echo.Context) error {
 	if (c.QueryParams().Get("ipv4") != "") {
 		if !utils.CheckIPAddress(c.QueryParams().Get("ipv4")) {
@@ -52,6 +54,7 @@ func StartJob(c echo.Context) error {
 // @Produce json
 // @Success 200 {string} string "job ok"
 // @Router /users/list [get]
+// @Tags   계정
 func GetUserList(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, service.NewUserRepository().FindAdminUser(), "\t")
 }
@@ -63,6 +66,7 @@ func GetUserList(c echo.Context) error {
 // @Param username path string true "Get One User"
 // @Success 200 {string} string "job ok"
 // @Router /users/{username} [get]
+// @Tags   계정
 func GetUser(c echo.Context) error {
 	username := c.Param("username")	
 	return c.JSONPretty(http.StatusOK, service.NewUserRepository().FindUser(username), "\t")

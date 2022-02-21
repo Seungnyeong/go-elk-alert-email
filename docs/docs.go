@@ -34,6 +34,9 @@ const docTemplate_swagger = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "스케줄"
+                ],
                 "summary": "Get All Job",
                 "responses": {
                     "200": {
@@ -53,6 +56,9 @@ const docTemplate_swagger = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "스케줄"
                 ],
                 "summary": "Job 스케줄 실행",
                 "parameters": [
@@ -83,6 +89,9 @@ const docTemplate_swagger = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "계정"
+                ],
                 "summary": "관리자 전체 조회",
                 "responses": {
                     "200": {
@@ -102,6 +111,9 @@ const docTemplate_swagger = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "계정"
                 ],
                 "summary": "사용자 조회",
                 "parameters": [

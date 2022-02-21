@@ -27,6 +27,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "스케줄"
+                ],
                 "summary": "Get All Job",
                 "responses": {
                     "200": {
@@ -46,6 +49,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "스케줄"
                 ],
                 "summary": "Job 스케줄 실행",
                 "parameters": [
@@ -76,6 +82,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "계정"
+                ],
                 "summary": "관리자 전체 조회",
                 "responses": {
                     "200": {
@@ -95,6 +104,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "계정"
                 ],
                 "summary": "사용자 조회",
                 "parameters": [
