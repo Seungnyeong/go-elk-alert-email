@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"test/config"
 	"test/utils"
 
 	"github.com/elastic/go-elasticsearch/v7"
@@ -24,19 +25,13 @@ type IElastic struct {
 func ElasticClient() *IElastic {
 	onceElastic.Do(func() {
 		if es == nil {
-			cert , err := utils.GetReadFile("cert/ca/ca.crt")
+			cert , err := utils.GetReadFile(config.Properties().Elastic.CertPath)
 			utils.CheckError(err)
 			es = &IElastic{
 				config: &elasticsearch.Config{
-					Addresses: []string{
-						"https://172.19.31.75:9200",
-						"https://172.19.31.98:9200",
-						"https://172.19.31.79:9200",
-						"https://172.19.31.60:9200",
-						"https://172.19.31.101:9200",
-					},
-					Username: "elastic",
-					Password: "EuVt9rRDLEnv2f6XwHTW",
+					Addresses: config.Properties().Elastic.Hosts,
+					Username: config.Properties().Elastic.Username,
+					Password: config.Properties().Elastic.Password,
 					CACert: cert,
 				},
 			}

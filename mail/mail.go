@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/smtp"
+	"test/config"
 	"test/keyinfo/service"
 )
 
 const (
-	mailDial string = "wemakeprice-com.mail.protection.outlook.com:25"
-	fromAddress string = "wkms@wemakeprice.com"
 	mimeString string = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	subject string = "Subject: [중요] WKMS health check alert \n"
 )
@@ -22,14 +21,14 @@ func SendMail(html string){
 	fmt.Println("sending email")
 	buf := bytes.NewBufferString(subject + mimeString + html)
 	
-	c, err := smtp.Dial(mailDial)
+	c, err := smtp.Dial(config.Properties().Mail.Host)
 	if err != nil {
 		log.Fatal("Error", err)
 	}
 	
 	defer c.Quit()
 	
-	if err := c.Mail(fromAddress); err != nil {
+	if err := c.Mail(config.Properties().Mail.From); err != nil {
 		log.Fatal(err)
 	}
 

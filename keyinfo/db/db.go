@@ -5,18 +5,12 @@ import (
 	"fmt"
 	"log"
 
+	"test/config"
 	"test/keyinfo/domain"
 	"test/utils"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-)
-
-const (
-	database = "keyinfo_nd"
-	user = "secutech"
-	password = "qhdksxla123!@#"
-	host = "10.107.12.65"
 )
 
 
@@ -40,7 +34,13 @@ type MysqlDatabase struct {
 
 
 func NewMysqlDatabase() *MysqlDatabase {
-    var connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true", user, password, host, database)
+    var connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true", 
+		config.Properties().Database.User, 
+		config.Properties().Database.Password,
+		config.Properties().Database.Host, 
+		config.Properties().Database.Name,
+	)
+	
 	client, err := sql.Open("mysql", connectionString)	
 	if err != nil {
 		utils.CheckError(err)

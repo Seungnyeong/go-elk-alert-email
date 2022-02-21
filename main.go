@@ -1,10 +1,14 @@
 package main
 
-import "test/swagger"
+import (
+	"test/config"
+	"test/swagger"
+)
 
 
 
 
 func main() {
+	config.Properties()
 	swagger.SwaggerStart()	
 }
