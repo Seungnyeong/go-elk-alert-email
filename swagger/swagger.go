@@ -91,7 +91,7 @@ func GetUser(c echo.Context) error {
 // @license.name  위메프 CERT팀 제공
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
+// @host      10.107.12.65:8081
 // @BasePath  /api/v1
 func SwaggerStart(port int) {
 	e := echo.New()

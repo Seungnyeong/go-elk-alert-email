@@ -8,8 +8,6 @@ definitions:
         type: string
       ip:
         type: string
-      key:
-        type: string
       name:
         type: string
       port:
@@ -21,7 +19,7 @@ definitions:
       zone:
         type: string
     type: object
-host: localhost:8080
+host: 10.107.12.65:8081
 info:
   contact:
     email: seungnyeong@wemakeprice.com
