@@ -35,7 +35,7 @@ func Job(monitorId []string) error {
 
 	for _, name := range monitorId {
 		query := MakeServerMonitoringQuery(name)
-		response, err := SearchRestAPIResult(es.Client, &query)
+		response, err := SearchRestAPIResult(es.Client, &query, "wmp-wkms-health-*")
 		result := ParsingInstance(response)
 
 		if err != nil {

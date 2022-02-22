@@ -121,11 +121,11 @@ func checkSIEMStatus() bool {
 	return status
 }
 
-func SearchRestAPIResult(es *elasticsearch.Client, query *bytes.Buffer) (map[string]interface{}, error){
+func SearchRestAPIResult(es *elasticsearch.Client, query *bytes.Buffer, indexName string) (map[string]interface{}, error){
 	var r map[string]interface{}
 	res, err := es.Search(
 		es.Search.WithContext(context.Background()),
-		es.Search.WithIndex("wmp-wkms-health-*"),
+		es.Search.WithIndex(indexName),
 		es.Search.WithBody(query),
 		es.Search.WithTrackTotalHits(true),
 		es.Search.WithPretty(),

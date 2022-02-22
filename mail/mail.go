@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/smtp"
 	"test/config"
+	"test/keyinfo/domain"
 	"test/keyinfo/service"
 )
 
@@ -16,7 +17,15 @@ const (
 
 
 func SendMail(html string){
-	user := service.NewUserRepository().FindUser("seungnyeong")
+	user , err := service.NewUserRepository().FindUser("seungnyeong")
+	if err != nil {
+		user = domain.User{
+			Username: "seungnyeong",
+			Email: "seungnyeong@wemakeprice.com",
+			IsSuperUser: true,
+			IsActive: false,
+		}
+	}
 
 	fmt.Println("sending email")
 	buf := bytes.NewBufferString(subject + mimeString + html)

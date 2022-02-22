@@ -46,7 +46,7 @@ func NewMysqlDatabase() *MysqlDatabase {
 		utils.CheckError(err)
 	}
 
-	client.SetConnMaxLifetime(time.Minute * 3)
+	client.SetConnMaxLifetime(time.Minute * 1)
 	client.SetMaxOpenConns(10)
 	client.SetMaxIdleConns(10)
 	return &MysqlDatabase{client}

@@ -22,8 +22,7 @@ func (repo UserRepository) FindAdminUser() []domain.User  {
 	return result
 }
 
-func (repo UserRepository) FindUser(username string) domain.User {
+func (repo UserRepository) FindUser(username string) (domain.User, error) {
 	result, err := repo.db.FindUser(username)
-	utils.CheckError(err)
-	return result
+	return result, err
 }

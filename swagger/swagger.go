@@ -68,8 +68,13 @@ func GetUserList(c echo.Context) error {
 // @Router /users/{username} [get]
 // @Tags   계정
 func GetUser(c echo.Context) error {
-	username := c.Param("username")	
-	return c.JSONPretty(http.StatusOK, service.NewUserRepository().FindUser(username), "\t")
+	username := c.Param("username")
+	user, err := service.NewUserRepository().FindUser(username)
+	if err != nil {
+		return c.JSONPretty(http.StatusInternalServerError, "Cannot get User info", "\t")	
+	}
+	
+	return c.JSONPretty(http.StatusOK, user, "\t")
 }
 
 

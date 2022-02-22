@@ -15,7 +15,7 @@ func MonitorInstanceJob(ipv4 string) error {
 	elastic.GetSingleton()
 	s := gocron.NewScheduler(time.UTC)
 	query := elastic.MakeServerGroupQuery(ipv4)
-	response, err := elastic.SearchRestAPIResult(elastic.ElasticClient().Client , &query)
+	response, err := elastic.SearchRestAPIResult(elastic.ElasticClient().Client , &query, "wmp-wkms-health-*")
 	
 	if err != nil {
 		return err
