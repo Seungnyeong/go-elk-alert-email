@@ -22,7 +22,7 @@ import (
 // @Router /job/instance [get]
 // @Tags   스케줄
 func GetAllInstance(c echo.Context) error {
-	return c.JSONPretty(http.StatusOK, elastic.GetSingleton().AllInstance(), " ")
+	return c.JSONPretty(http.StatusOK, elastic.AllInstance(elastic.GetSingleton()), " ")
 }
 
 // @Summary Job 스케줄 실행 
@@ -73,7 +73,7 @@ func GetUser(c echo.Context) error {
 	if err != nil {
 		return c.JSONPretty(http.StatusInternalServerError, "Cannot get User info", "\t")	
 	}
-	
+
 	return c.JSONPretty(http.StatusOK, user, "\t")
 }
 

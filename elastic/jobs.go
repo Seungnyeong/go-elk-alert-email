@@ -41,11 +41,11 @@ func Job(monitorId []string) error {
 		if err != nil {
 			errMsg = err.Error()
 		}
-
-		if !FindInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port)) {
+		check , _ := GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port), is)
+		if check == nil {
 			is.AddInstance(result)		
 		} else {
-			i, err := is.GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port))
+			i, err := GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port), is)
 			utils.CheckError(err)
 			i.UpdateIntance(result.Status, utils.RFCtoKST(result.Timestamp))
 		}

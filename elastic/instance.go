@@ -15,13 +15,12 @@ var (
 	ErrNotFound = errors.New("not found")
 )
 type instances struct {
-	server []*Instance
+	server map[string]*Instance
 }
 
 
 // Instance struct
 type Instance struct {
-	Key      	string `json:"key"`
 	Ip 		 	string `json:"ip"`
 	Hostname 	string `json:"hostname"`
 	Port 	 	string `json:"port"`
@@ -33,24 +32,13 @@ type Instance struct {
 }
 
 func (is *instances) AddInstance(i Instance) {
-	is.server = append(is.server, createInstance(i))
+	key := fmt.Sprintf("%s:%s", i.Ip, i.Port)
+	is.server[key] = createInstance(i)
 }
 
-func FindInstance(key string) bool {
-	check := false
-	Outer:
-		for _, i := range is.server {
-			if i.Key == key {
-				check = true
-				break Outer
-			}
-		}
-	return check
-}
 
 func createInstance(i Instance) *Instance {
 	newInstance := Instance{
-		Key : fmt.Sprintf("%s:%s", i.Ip, i.Port),
 		Ip : i.Ip,
 		Hostname:  i.Hostname,
 		Port : i.Port,
@@ -75,26 +63,25 @@ func (i *Instance) UpdateIntanceDownCount(count int) {
 	i.Downcount = count
 }
 
-func (is *instances) AllInstance() []*Instance {
+func AllInstance(is *instances) map[string]*Instance {
 	return is.server
 }
 
-func (is *instances) GetInstance(key string) (*Instance, error) {
-	if len(is.server) > 0 {
-		for _, i := range is.server {
-			if i.Key == key {
-				return i, nil
-			}
-		}
+func GetInstance(key string, is *instances) (*Instance, error) {
+	server := is.server[key]
+	if server == nil {
+		return nil, ErrNotFound
 	}
-	return nil, ErrNotFound
+	return is.server[key], nil
 }
 
 
 func GetSingleton() *instances {
 	once.Do(func() {
 		if is == nil {
-			is = new(instances)
+			is = &instances{
+				server: make(map[string]*Instance),
+			}
 		}
 	})
 	return is
