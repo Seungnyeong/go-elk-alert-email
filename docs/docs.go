@@ -13,7 +13,7 @@ const docTemplate_swagger = `{
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "CERT팀 김승녕 매니저",
-            "url": "http://stash.wemakeprice.com",
+            "url": "https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse",
             "email": "seungnyeong@wemakeprice.com"
         },
         "license": {
