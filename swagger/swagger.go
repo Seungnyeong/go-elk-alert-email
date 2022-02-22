@@ -22,6 +22,7 @@ import (
 // @Router /job/instance [get]
 // @Tags   스케줄
 func GetAllInstance(c echo.Context) error {
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	return c.JSONPretty(http.StatusOK, elastic.AllInstance(elastic.GetSingleton()), " ")
 }
 
