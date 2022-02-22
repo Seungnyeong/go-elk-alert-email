@@ -87,7 +87,7 @@ func GetUser(c echo.Context) error {
 
 // @host      localhost:8080
 // @BasePath  /api/v1
-func SwaggerStart() {
+func SwaggerStart(port int) {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
@@ -99,5 +99,5 @@ func SwaggerStart() {
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }

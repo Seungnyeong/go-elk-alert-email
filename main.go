@@ -1,14 +1,12 @@
 package main
 
 import (
-	"test/config"
-	"test/swagger"
+	"test/cli"
 )
 
 
 
 
 func main() {
-	config.Properties()
-	swagger.SwaggerStart()	
+	cli.Start()
 }
