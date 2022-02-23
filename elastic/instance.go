@@ -63,7 +63,7 @@ func (i *Instance) UpdateIntanceDownCount(count int) {
 	i.Downcount = count
 }
 
-func AllInstance(is *instances) map[string]*Instance {
+func GetAllInstance(is *instances) map[string]*Instance {
 	return is.server
 }
 

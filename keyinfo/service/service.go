@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"test/keyinfo/db"
 	"test/keyinfo/domain"
 	"test/utils"
@@ -15,11 +14,10 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{db.NewMysqlDatabase()}
 }
 
-func (repo UserRepository) FindAdminUser() []domain.User  {
+func (repo UserRepository) FindAdminUser() ([]domain.User, error ) {
 	result, err := repo.db.FindAdminUser()
 	utils.CheckError(err)
-	fmt.Println(result)
-	return result
+	return result, err
 }
 
 func (repo UserRepository) FindUser(username string) (domain.User, error) {

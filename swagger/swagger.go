@@ -14,6 +14,12 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
+type httpResponse struct {
+	TotalCount int				`json:"count,omitempty"`
+	Message	string 				`json:"message"`
+	Result interface{}			`json:"result,omitempty"`
+}
+
 // @Summary Get All Job
 // @Description 현재 실행되고 있는 잡을 알수있음.
 // @Accept json
@@ -23,7 +29,8 @@ import (
 // @Tags   스케줄
 func GetAllInstance(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	return c.JSONPretty(http.StatusOK, elastic.AllInstance(elastic.GetSingleton()), " ")
+
+	return c.JSONPretty(http.StatusOK, elastic.GetAllInstance(elastic.GetSingleton()), " ")
 }
 
 // @Summary Job 스케줄 실행 
@@ -35,18 +42,28 @@ func GetAllInstance(c echo.Context) error {
 // @Router /job/start [get]
 // @Tags   스케줄
 func StartJob(c echo.Context) error {
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	if (c.QueryParams().Get("ipv4") != "") {
 		if !utils.CheckIPAddress(c.QueryParams().Get("ipv4")) {
-			return c.JSONPretty(http.StatusBadRequest, fmt.Sprintf("%s is not format ipv4", c.QueryParams().Get("ipv4") ), "\t")
+			return c.JSONPretty(http.StatusBadRequest, &httpResponse{
+				Message: fmt.Sprintf("%s is not formatted ipv4", c.QueryParams().Get("ipv4")),
+			}, "\t")
 		}
 
 		err := crons.MonitorInstanceJob(c.QueryParams().Get("ipv4"))
 		if err != nil {
-			return c.JSONPretty(http.StatusBadRequest, err.Error(), "\t")	
+			return c.JSONPretty(http.StatusBadRequest, &httpResponse{
+				Message: err.Error(),
+			}, "\t")	
 		}	
-		return c.JSONPretty(http.StatusOK, fmt.Sprintf("%s start", c.QueryParams().Get("ipv4") ), "\t")
+		return c.JSONPretty(http.StatusOK, &httpResponse{
+			Message: "Success",
+			Result: fmt.Sprintf("Start the schedule for instances included in the %s server.", c.QueryParams().Get("ipv4") ),
+		}, "\t")
 	}
-	return c.JSONPretty(http.StatusBadRequest, "ipv4 Arg cannot be null", "\t")
+	return c.JSONPretty(http.StatusBadRequest, &httpResponse{
+		Message: "ipv4 cannot be null",
+	}, "\t")
 }
 
 // @Summary 관리자 전체 조회
@@ -57,7 +74,19 @@ func StartJob(c echo.Context) error {
 // @Router /users/list [get]
 // @Tags   계정
 func GetUserList(c echo.Context) error {
-	return c.JSONPretty(http.StatusOK, service.NewUserRepository().FindAdminUser(), "\t")
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+	result, err := service.NewUserRepository().FindAdminUser()
+	if err != nil {
+		return c.JSONPretty(http.StatusInternalServerError, &httpResponse{
+			Message: err.Error(),
+		}, "\t")	
+	}
+	
+	return c.JSONPretty(http.StatusOK, &httpResponse{
+		Message: "Success",
+		Result: result,
+		TotalCount: len(result),
+	}, "\t")
 }
 
 // @Summary 사용자 조회
@@ -69,13 +98,17 @@ func GetUserList(c echo.Context) error {
 // @Router /users/{username} [get]
 // @Tags   계정
 func GetUser(c echo.Context) error {
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	username := c.Param("username")
 	user, err := service.NewUserRepository().FindUser(username)
 	if err != nil {
 		return c.JSONPretty(http.StatusInternalServerError, "Cannot get User info", "\t")	
 	}
-
-	return c.JSONPretty(http.StatusOK, user, "\t")
+	
+	return c.JSONPretty(http.StatusOK, &httpResponse{
+		Message: "조회성공",
+		Result: user,
+	}, "\t")
 }
 
 
@@ -97,13 +130,10 @@ func SwaggerStart(port int) {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-
 	e.GET("/api/v1/job/instance", GetAllInstance)
 	e.GET("/api/v1/job/start", StartJob)
 	e.GET("/api/v1/users/list", GetUserList)
 	e.GET("/api/v1/users/:username", GetUser)
-
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }

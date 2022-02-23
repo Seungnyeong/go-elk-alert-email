@@ -100,7 +100,7 @@ const style string = `
 
 func MakeTemplate() HTML  {
     var results HTML
-    for _, server := range AllInstance(is) {
+    for _, server := range GetAllInstance(is) {
         results += Tr_(
             Td_(Text(server.Timestamp)),
             Td_(Text(server.Status)),
