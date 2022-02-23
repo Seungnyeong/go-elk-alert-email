@@ -2,7 +2,6 @@ package mail
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/smtp"
 	"test/config"
@@ -27,32 +26,31 @@ func SendMail(html string){
 		}
 	}
 
-	fmt.Println("sending email")
 	buf := bytes.NewBufferString(subject + mimeString + html)
 	
 	c, err := smtp.Dial(config.Properties().Mail.Host)
 	if err != nil {
-		log.Fatal("Error", err)
+		log.Panic("Error", err)
 	}
 	
 	defer c.Quit()
 	
 	if err := c.Mail(config.Properties().Mail.From); err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	if err := c.Rcpt(user.Email); err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	wc , err := c.Data()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	defer wc.Close()
 	
 	if _, err = buf.WriteTo(wc); err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	
 }

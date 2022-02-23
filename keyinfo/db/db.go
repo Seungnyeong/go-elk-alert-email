@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 
@@ -32,6 +33,7 @@ type MysqlDatabase struct {
    client *sql.DB
 }
 
+var errCannotFindUser = errors.New("there is NOT that user")
 
 func NewMysqlDatabase() *MysqlDatabase {
     var connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true", 
@@ -46,7 +48,7 @@ func NewMysqlDatabase() *MysqlDatabase {
 		utils.CheckError(err)
 	}
 
-	client.SetConnMaxLifetime(time.Minute * 1)
+	client.SetConnMaxLifetime(time.Second * 10)
 	client.SetMaxOpenConns(10)
 	client.SetMaxIdleConns(10)
 	return &MysqlDatabase{client}
@@ -55,6 +57,9 @@ func NewMysqlDatabase() *MysqlDatabase {
 func (ms MysqlDatabase) FindAdminUser() ([]domain.User, error) {
 	users := make([]domain.User, 0)
 	rows, err := ms.client.Query("select username, email, is_superuser, is_active from auth_user where is_superuser = true AND is_active = true")
+	if err != nil {
+		return nil, err
+	}
 	utils.CheckError(err)
 	defer ms.client.Close()
 
@@ -73,10 +78,15 @@ func (ms MysqlDatabase) FindAdminUser() ([]domain.User, error) {
 }
 
 func (ms MysqlDatabase) FindUser(username string) (domain.User, error) {
-	row := ms.client.QueryRow("select username, email, is_superuser, is_active from auth_user where username = ?", username)
 	var user domain.User
-	err := row.Scan(&user.Username, &user.Email, &user.IsSuperUser, &user.IsActive)
-	utils.CheckError(err)
-	defer ms.client.Close()
+	err := ms.client.QueryRow("select username, email, is_superuser, is_active from auth_user where username = ?", username).Scan(&user.Username, &user.Email, &user.IsSuperUser, &user.IsActive)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// there were no rows, but otherwise no error occurred
+			return user, errCannotFindUser
+		} else {
+			log.Fatal(err)
+		}
+	}
 	return user, err
 }

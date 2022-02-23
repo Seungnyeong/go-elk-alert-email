@@ -11,7 +11,16 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
+)
+
+type Message string
+const indent string = "\t"
+const (
+	Success 	 = Message("Sccuess returned response")
+	CannotFind   = Message("Cannot find this")
+	Error		 = Message("Server internal Error")
 )
 
 type httpResponse struct {
@@ -29,8 +38,12 @@ type httpResponse struct {
 // @Tags   스케줄
 func GetAllInstance(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
-	return c.JSONPretty(http.StatusOK, elastic.GetAllInstance(elastic.GetSingleton()), " ")
+	result := elastic.GetAllInstance(elastic.GetSingleton())
+	return c.JSONPretty(http.StatusOK, &httpResponse{
+		Message: string(Success),
+		Result: result,
+		TotalCount: len(result),
+	}, indent)
 }
 
 // @Summary Job 스케줄 실행 
@@ -47,23 +60,23 @@ func StartJob(c echo.Context) error {
 		if !utils.CheckIPAddress(c.QueryParams().Get("ipv4")) {
 			return c.JSONPretty(http.StatusBadRequest, &httpResponse{
 				Message: fmt.Sprintf("%s is not formatted ipv4", c.QueryParams().Get("ipv4")),
-			}, "\t")
+			}, indent)
 		}
 
 		err := crons.MonitorInstanceJob(c.QueryParams().Get("ipv4"))
 		if err != nil {
 			return c.JSONPretty(http.StatusBadRequest, &httpResponse{
 				Message: err.Error(),
-			}, "\t")	
+			}, indent)	
 		}	
 		return c.JSONPretty(http.StatusOK, &httpResponse{
 			Message: "Success",
 			Result: fmt.Sprintf("Start the schedule for instances included in the %s server.", c.QueryParams().Get("ipv4") ),
-		}, "\t")
+		}, indent)
 	}
 	return c.JSONPretty(http.StatusBadRequest, &httpResponse{
 		Message: "ipv4 cannot be null",
-	}, "\t")
+	}, indent)
 }
 
 // @Summary 관리자 전체 조회
@@ -79,14 +92,14 @@ func GetUserList(c echo.Context) error {
 	if err != nil {
 		return c.JSONPretty(http.StatusInternalServerError, &httpResponse{
 			Message: err.Error(),
-		}, "\t")	
+		}, indent)	
 	}
 	
 	return c.JSONPretty(http.StatusOK, &httpResponse{
-		Message: "Success",
+		Message: string(Success),
 		Result: result,
 		TotalCount: len(result),
-	}, "\t")
+	}, indent)
 }
 
 // @Summary 사용자 조회
@@ -102,13 +115,15 @@ func GetUser(c echo.Context) error {
 	username := c.Param("username")
 	user, err := service.NewUserRepository().FindUser(username)
 	if err != nil {
-		return c.JSONPretty(http.StatusInternalServerError, "Cannot get User info", "\t")	
+		return c.JSONPretty(http.StatusOK, &httpResponse{
+		Message: err.Error(),
+	}, indent)
 	}
 	
 	return c.JSONPretty(http.StatusOK, &httpResponse{
-		Message: "조회성공",
+		Message: string(Success),
 		Result: user,
-	}, "\t")
+	}, indent)
 }
 
 
@@ -128,8 +143,16 @@ func GetUser(c echo.Context) error {
 // @BasePath  /api/v1
 func SwaggerStart(port int) {
 	e := echo.New()
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: `{"time":"${time_rfc3339_nano}","id":"${id}","remote_ip":"${remote_ip}",` +
+					`"host":"${host}","method":"${method}","uri":"${uri}","user_agent":"${user_agent}",` +
+					`"status":${status},"error":"${error}","latency":${latency},"latency_human":"${latency_human}"` +
+					`}` + "\n",
+	}))
+	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
+		StackSize: 1 << 10, // 1 KB
+		LogLevel:  log.ERROR,
+	}))
 	e.GET("/api/v1/job/instance", GetAllInstance)
 	e.GET("/api/v1/job/start", StartJob)
 	e.GET("/api/v1/users/list", GetUserList)
