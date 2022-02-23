@@ -11,33 +11,33 @@ import (
 
 // DatabaseConfig Type
 type DatabaseConfig struct {
-	Name    	string `yaml:"name"`
-	User        string `yaml:"user"`
-	Password    string `yaml:"password"`
-	Host        string `yaml:"host"`
+	Name     string `yaml:"name"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
 }
- 
+
 // ServerConfig Type
 type ElasticConfig struct {
-	Hosts		[]string 	`yaml:"hosts"`
-	Username    string 	 	`yaml:"username"`
-	Password  	string    	`yaml:"password"`
-	CertPath 	string   	`yaml:"certpath"`
+	Hosts    []string `yaml:"hosts"`
+	Username string   `yaml:"username"`
+	Password string   `yaml:"password"`
+	CertPath string   `yaml:"certpath"`
 }
 
 // Mail Type
 
 type MailConfig struct {
-	Host	string		`yaml:"host"`
-	From	string		`yaml:"from"`
-	To      string		`yaml:"to"`
+	Host string `yaml:"host"`
+	From string `yaml:"from"`
+	To   string `yaml:"to"`
 }
- 
+
 // Config Type
 type Config struct {
-	Database 	DatabaseConfig   `yaml:"mysql"`
-	Elastic   	ElasticConfig    `yaml:"elastic"`
-	Mail		MailConfig		 `yaml:"mail"`
+	Database DatabaseConfig `yaml:"mysql"`
+	Elastic  ElasticConfig  `yaml:"elastic"`
+	Mail     MailConfig     `yaml:"mail"`
 }
 
 var once sync.Once
@@ -60,4 +60,3 @@ func Init(path string) *Config {
 	})
 	return P
 }
-

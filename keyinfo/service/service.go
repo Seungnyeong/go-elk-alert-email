@@ -13,7 +13,7 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{db.NewMysqlDatabase()}
 }
 
-func (repo UserRepository) FindAdminUser() ([]domain.User, error ) {
+func (repo UserRepository) FindAdminUser() ([]domain.User, error) {
 	result, err := repo.db.FindAdminUser()
 	return result, err
 }

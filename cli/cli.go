@@ -9,11 +9,11 @@ import (
 )
 
 func usage() {
-	fmt.Printf("================================= [START] WKMS Alert =================================\n\n")	
+	fmt.Printf("================================= [START] WKMS Alert =================================\n\n")
 	fmt.Printf("\t해당 플래그로 Port 와 환경설정 파일의 경로를 지정할 수 있습니다.\n")
 	fmt.Printf("\t\t-port: 스웨거 기동 port\n")
 	fmt.Printf("\t\t-yaml: 환경설정 파일 \n\n")
-	fmt.Printf("=============================== Licenced by WMP CERT =================================\n")	
+	fmt.Printf("=============================== Licenced by WMP CERT =================================\n")
 }
 
 func Start() {

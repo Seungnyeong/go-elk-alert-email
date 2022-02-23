@@ -6,12 +6,10 @@ import (
 
 const (
 	mimeString string = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-	subject string = "Subject: [중요] WKMS health check alert \n"
+	subject    string = "Subject: [중요] WKMS health check alert \n"
 )
 
-
 func SendMail(user_mail string, html string) {
-	
 
 	//buf := bytes.NewBufferString(subject + mimeString + html)
 	fmt.Println(user_mail)
@@ -19,9 +17,9 @@ func SendMail(user_mail string, html string) {
 	// if err != nil {
 	// 	log.Panic("Error", err)
 	// }
-	
+
 	// defer c.Quit()
-	
+
 	// if err := c.Mail(config.P.Mail.From); err != nil {
 	// 	log.Panic(err)
 	// }
@@ -35,9 +33,9 @@ func SendMail(user_mail string, html string) {
 	// 	log.Panic(err)
 	// }
 	// defer wc.Close()
-	
+
 	// if _, err = buf.WriteTo(wc); err != nil {
 	// 	log.Panic(err)
 	// }
-	
+
 }

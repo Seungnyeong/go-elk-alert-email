@@ -5,7 +5,6 @@ import (
 	a "github.com/julvo/htmlgo/attributes"
 )
 
-
 const style string = `
     * {
       box-sizing: border-box;
@@ -98,50 +97,50 @@ const style string = `
     }
 `
 
-func MakeTemplate() HTML  {
-    var results HTML
-    for _, server := range GetAllInstance(is) {
-        results += Tr_(
-            Td_(Text(server.Timestamp)),
-            Td_(Text(server.Status)),
-            Td_(Text(server.Name)),
-            Td_(Text(server.Ip)),
-            Td_(Text(server.Port)),
-            Td_(Text(server.Zone)),
-            Td_(Text(server.Hostname)),
-        )
-    }
+func MakeTemplate() HTML {
+	var results HTML
+	for _, server := range GetAllInstance(is) {
+		results += Tr_(
+			Td_(Text(server.Timestamp)),
+			Td_(Text(server.Status)),
+			Td_(Text(server.Name)),
+			Td_(Text(server.Ip)),
+			Td_(Text(server.Port)),
+			Td_(Text(server.Zone)),
+			Td_(Text(server.Hostname)),
+		)
+	}
 
-    page :=
-        Html5_(
-            Head_(
-                Meta(Attr(a.Charset_("utf-8"))),
-                Meta(Attr(a.Name_("viewport"), a.Content_("width=device-width"), a.InitialScale_("1"))),
-            ),
-            Body_(
-                H2_(Text("확인하세요! WKMS가 DOWN 상태 입니다.")),
-                P_("아래와 같이 서버 모니터링이 확인되었습니다. 본 메일은 회신이 불가능합니다."),
-                P_("관리자 확인 필요합니다."),
-                Div(Attr(a.Class_("table-wrapper")),  
-                Table(Attr(a.Class_("fl-table")),
-                    Thead_(
-                        Tr_(
-                            Th_("Timestamp"),
-                            Th_("Status"),
-                            Th_("Name"),
-                            Th_("Ip"),
-                            Th_("Port"),
-                            Th_("Zone"),
-                            Th_("Hostname")),
-                    ),
-                    Tbody_(
-                        results,
-                    ),
-                )),
-                    A(Attr(a.Href("https://wmp-siem.wemakeprice.work/app/uptime?dateRangeStart=now-24h&dateRangeEnd=now")), Text("보안팀 SIEM UPTIME 이동")),
-                    A(Attr(a.Href("http://10.102.181.45:9000/")), Text("보안팀 Jenkins 이동")),
-                ),
-                Style_(Text(style)),
-            )
-    return page
+	page :=
+		Html5_(
+			Head_(
+				Meta(Attr(a.Charset_("utf-8"))),
+				Meta(Attr(a.Name_("viewport"), a.Content_("width=device-width"), a.InitialScale_("1"))),
+			),
+			Body_(
+				H2_(Text("확인하세요! WKMS가 DOWN 상태 입니다.")),
+				P_("아래와 같이 서버 모니터링이 확인되었습니다. 본 메일은 회신이 불가능합니다."),
+				P_("관리자 확인 필요합니다."),
+				Div(Attr(a.Class_("table-wrapper")),
+					Table(Attr(a.Class_("fl-table")),
+						Thead_(
+							Tr_(
+								Th_("Timestamp"),
+								Th_("Status"),
+								Th_("Name"),
+								Th_("Ip"),
+								Th_("Port"),
+								Th_("Zone"),
+								Th_("Hostname")),
+						),
+						Tbody_(
+							results,
+						),
+					)),
+				A(Attr(a.Href("https://wmp-siem.wemakeprice.work/app/uptime?dateRangeStart=now-24h&dateRangeEnd=now")), Text("보안팀 SIEM UPTIME 이동")),
+				A(Attr(a.Href("http://10.102.181.45:9000/")), Text("보안팀 Jenkins 이동")),
+			),
+			Style_(Text(style)),
+		)
+	return page
 }

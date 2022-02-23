@@ -10,26 +10,26 @@ import (
 )
 
 var (
-	once sync.Once
-	is *instances
+	once        sync.Once
+	is          *instances
 	ErrNotFound = errors.New("not found")
 )
+
 type instances struct {
 	server map[string]*Instance
 }
 
-
 // Instance struct
 type Instance struct {
-	Ip 		 	string `json:"ip"`
-	Hostname 	string `json:"hostname"`
-	Port 	 	string `json:"port"`
-	Status   	string `json:"status"`
-	Zone	 	string `json:"zone"`
-	Timestamp 	string `json:"timestamp"`
-	Name 		string `json:"name"`
-	Downcount	int	   `json:"downcount"`
-	Mailed		bool    `json:"mailed"`
+	Ip        string `json:"ip"`
+	Hostname  string `json:"hostname"`
+	Port      string `json:"port"`
+	Status    string `json:"status"`
+	Zone      string `json:"zone"`
+	Timestamp string `json:"timestamp"`
+	Name      string `json:"name"`
+	Downcount int    `json:"downcount"`
+	Mailed    bool   `json:"mailed"`
 }
 
 func (is *instances) AddInstance(i Instance) {
@@ -37,18 +37,17 @@ func (is *instances) AddInstance(i Instance) {
 	is.server[key] = createInstance(i)
 }
 
-
 func createInstance(i Instance) *Instance {
 	newInstance := Instance{
-		Ip : i.Ip,
+		Ip:        i.Ip,
 		Hostname:  i.Hostname,
-		Port : i.Port,
-		Status: i.Status,
-		Zone : i.Zone,
+		Port:      i.Port,
+		Status:    i.Status,
+		Zone:      i.Zone,
 		Timestamp: utils.RFCtoKST(i.Timestamp),
-		Name : i.Name,
+		Name:      i.Name,
 		Downcount: 0,
-		Mailed: false,
+		Mailed:    false,
 	}
 	return &newInstance
 }
@@ -58,7 +57,7 @@ func (i *Instance) UpdateIntance(status, timestamp string) {
 	i.Timestamp = timestamp
 	if status == "down" {
 		i.Downcount++
-	} 
+	}
 }
 
 func (i *Instance) UpdateIntanceDownCount(count int) {
@@ -81,7 +80,6 @@ func GetInstance(key string, is *instances) (*Instance, error) {
 	return is.server[key], nil
 }
 
-
 func GetSingleton() *instances {
 	once.Do(func() {
 		if is == nil {
@@ -93,14 +91,14 @@ func GetSingleton() *instances {
 	return is
 }
 
-func ParsingInstance(response map[string]interface{}) Instance{
+func ParsingInstance(response map[string]interface{}) Instance {
 	var instance Instance
 	for _, hit := range response["hits"].(map[string]interface{})["hits"].([]interface{}) {
 		_source := hit.(map[string]interface{})["_source"]
 		monitor := _source.(map[string]interface{})["monitor"]
 		observer := _source.(map[string]interface{})["observer"]
 		instance.Zone = fmt.Sprintf("%s", observer.(map[string]interface{})["geo"].(map[string]interface{})["name"])
-		instance.Hostname = fmt.Sprintf("%s",observer.(map[string]interface{})["hostname"])
+		instance.Hostname = fmt.Sprintf("%s", observer.(map[string]interface{})["hostname"])
 		instance.Timestamp = fmt.Sprintf("%s", _source.(map[string]interface{})["@timestamp"])
 		instance.Ip = fmt.Sprintf("%s", monitor.(map[string]interface{})["ip"])
 		instance.Status = fmt.Sprintf("%s", monitor.(map[string]interface{})["status"])
@@ -112,8 +110,8 @@ func ParsingInstance(response map[string]interface{}) Instance{
 
 func ParsingInstanceId(response map[string]interface{}) []string {
 	var motoringIds []string
-	for _, bucket := range response["aggregations"].(map[string]interface{})["group_by_monitor.id"].(map[string]interface{})["buckets"].([]interface{}){
-		motoringIds = append(motoringIds, fmt.Sprintf("%s",bucket.(map[string]interface{})["key"]))
+	for _, bucket := range response["aggregations"].(map[string]interface{})["group_by_monitor.id"].(map[string]interface{})["buckets"].([]interface{}) {
+		motoringIds = append(motoringIds, fmt.Sprintf("%s", bucket.(map[string]interface{})["key"]))
 	}
 	return motoringIds
 }

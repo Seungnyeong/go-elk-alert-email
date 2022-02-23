@@ -22,7 +22,7 @@ func RFCtoKST(timestr string) string {
 }
 
 func GetReadFile(dir string) ([]byte, error) {
-	cert , err := ioutil.ReadFile(dir)
+	cert, err := ioutil.ReadFile(dir)
 	if err != nil {
 		return nil, err
 	}
@@ -37,9 +37,9 @@ func SerializeToJson(body interface{}) bytes.Buffer {
 }
 
 func CheckIPAddress(ip string) bool {
-    if net.ParseIP(ip) == nil {
-        return false
-    } else {
-        return true
-    }
+	if net.ParseIP(ip) == nil {
+		return false
+	} else {
+		return true
+	}
 }

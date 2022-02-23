@@ -14,36 +14,34 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-
 type DataBase interface {
 	FindAdminUser() ([]domain.User, error)
 	FindUser(username string) (domain.User, error)
 }
 
 type MySqlConnection struct {
-   url string
+	url string
 }
 
 func NewMySqlConnection(url string) *MySqlConnection {
 	return &MySqlConnection{url}
 }
 
-
 type MysqlDatabase struct {
-   client *sql.DB
+	client *sql.DB
 }
 
 var errCannotFindUser = errors.New("there is NOT that user")
 
 func NewMysqlDatabase() *MysqlDatabase {
-    var connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true", 
-		config.P.Database.User, 
+	var connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true",
+		config.P.Database.User,
 		config.P.Database.Password,
-		config.P.Database.Host, 
+		config.P.Database.Host,
 		config.P.Database.Name,
 	)
-	
-	client, err := sql.Open("mysql", connectionString)	
+
+	client, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		utils.CheckError(err)
 	}

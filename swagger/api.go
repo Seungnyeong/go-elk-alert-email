@@ -16,17 +16,18 @@ import (
 )
 
 type Message string
+
 const indent string = "\t"
 const (
-	Success 	 = Message("Sccuess returned response")
-	CannotFind   = Message("Cannot find this")
-	Error		 = Message("Server internal Error")
+	Success    = Message("Sccuess returned response")
+	CannotFind = Message("Cannot find this")
+	Error      = Message("Server internal Error")
 )
 
 type httpResponse struct {
-	TotalCount int				`json:"count,omitempty"`
-	Message	string 				`json:"message"`
-	Result interface{}			`json:"result,omitempty"`
+	TotalCount int         `json:"count,omitempty"`
+	Message    string      `json:"message"`
+	Result     interface{} `json:"result,omitempty"`
 }
 
 // @Summary Get All Job
@@ -40,13 +41,13 @@ func GetAllInstance(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	result := elastic.GetAllInstance(elastic.GetSingleton())
 	return c.JSONPretty(http.StatusOK, &httpResponse{
-		Message: string(Success),
-		Result: result,
+		Message:    string(Success),
+		Result:     result,
 		TotalCount: len(result),
 	}, indent)
 }
 
-// @Summary Job 스케줄 실행 
+// @Summary Job 스케줄 실행
 // @Description ipv4를 입력하세요
 // @Accept json
 // @Produce json
@@ -56,7 +57,7 @@ func GetAllInstance(c echo.Context) error {
 // @Tags   스케줄
 func StartJob(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	if (c.QueryParams().Get("ipv4") != "") {
+	if c.QueryParams().Get("ipv4") != "" {
 		if !utils.CheckIPAddress(c.QueryParams().Get("ipv4")) {
 			return c.JSONPretty(http.StatusBadRequest, &httpResponse{
 				Message: fmt.Sprintf("%s is not formatted ipv4", c.QueryParams().Get("ipv4")),
@@ -67,11 +68,11 @@ func StartJob(c echo.Context) error {
 		if err != nil {
 			return c.JSONPretty(http.StatusBadRequest, &httpResponse{
 				Message: err.Error(),
-			}, indent)	
-		}	
+			}, indent)
+		}
 		return c.JSONPretty(http.StatusOK, &httpResponse{
 			Message: "Success",
-			Result: fmt.Sprintf("Start the schedule for instances included in the %s server.", c.QueryParams().Get("ipv4") ),
+			Result:  fmt.Sprintf("Start the schedule for instances included in the %s server.", c.QueryParams().Get("ipv4")),
 		}, indent)
 	}
 	return c.JSONPretty(http.StatusBadRequest, &httpResponse{
@@ -92,12 +93,12 @@ func GetUserList(c echo.Context) error {
 	if err != nil {
 		return c.JSONPretty(http.StatusInternalServerError, &httpResponse{
 			Message: err.Error(),
-		}, indent)	
+		}, indent)
 	}
-	
+
 	return c.JSONPretty(http.StatusOK, &httpResponse{
-		Message: string(Success),
-		Result: result,
+		Message:    string(Success),
+		Result:     result,
 		TotalCount: len(result),
 	}, indent)
 }
@@ -116,16 +117,15 @@ func GetUser(c echo.Context) error {
 	user, err := service.NewUserRepository().FindUser(username)
 	if err != nil {
 		return c.JSONPretty(http.StatusOK, &httpResponse{
-		Message: err.Error(),
-	}, indent)
+			Message: err.Error(),
+		}, indent)
 	}
-	
+
 	return c.JSONPretty(http.StatusOK, &httpResponse{
 		Message: string(Success),
-		Result: user,
+		Result:  user,
 	}, indent)
 }
-
 
 // @title           wkms-alert
 // @version         1.0
@@ -145,9 +145,9 @@ func SwaggerStart(port int) {
 	e := echo.New()
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: `{"time":"${time_rfc3339_nano}","id":"${id}","remote_ip":"${remote_ip}",` +
-					`"host":"${host}","method":"${method}","uri":"${uri}","user_agent":"${user_agent}",` +
-					`"status":${status},"error":"${error}","latency":${latency},"latency_human":"${latency_human}"` +
-					`}` + "\n",
+			`"host":"${host}","method":"${method}","uri":"${uri}","user_agent":"${user_agent}",` +
+			`"status":${status},"error":"${error}","latency":${latency},"latency_human":"${latency_human}"` +
+			`}` + "\n",
 	}))
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
 		StackSize: 1 << 10, // 1 KB
