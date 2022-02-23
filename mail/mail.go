@@ -1,12 +1,7 @@
 package mail
 
 import (
-	"bytes"
-	"log"
-	"net/smtp"
-	"test/config"
-	"test/keyinfo/domain"
-	"test/keyinfo/service"
+	"fmt"
 )
 
 const (
@@ -15,42 +10,34 @@ const (
 )
 
 
-func SendMail(html string){
-	user , err := service.NewUserRepository().FindUser("seungnyeong")
-	if err != nil {
-		user = domain.User{
-			Username: "seungnyeong",
-			Email: "seungnyeong@wemakeprice.com",
-			IsSuperUser: true,
-			IsActive: false,
-		}
-	}
+func SendMail(user_mail string, html string) {
+	
 
-	buf := bytes.NewBufferString(subject + mimeString + html)
+	//buf := bytes.NewBufferString(subject + mimeString + html)
+	fmt.Println(user_mail)
+	// c, err := smtp.Dial(config.P.Mail.Host)
+	// if err != nil {
+	// 	log.Panic("Error", err)
+	// }
 	
-	c, err := smtp.Dial(config.P.Mail.Host)
-	if err != nil {
-		log.Panic("Error", err)
-	}
+	// defer c.Quit()
 	
-	defer c.Quit()
-	
-	if err := c.Mail(config.P.Mail.From); err != nil {
-		log.Panic(err)
-	}
+	// if err := c.Mail(config.P.Mail.From); err != nil {
+	// 	log.Panic(err)
+	// }
 
-	if err := c.Rcpt(user.Email); err != nil {
-		log.Panic(err)
-	}
+	// if err := c.Rcpt(user_mail); err != nil {
+	// 	log.Panic(err)
+	// }
 
-	wc , err := c.Data()
-	if err != nil {
-		log.Panic(err)
-	}
-	defer wc.Close()
+	// wc , err := c.Data()
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
+	// defer wc.Close()
 	
-	if _, err = buf.WriteTo(wc); err != nil {
-		log.Panic(err)
-	}
+	// if _, err = buf.WriteTo(wc); err != nil {
+	// 	log.Panic(err)
+	// }
 	
 }

@@ -30,6 +30,7 @@ type ElasticConfig struct {
 type MailConfig struct {
 	Host	string		`yaml:"host"`
 	From	string		`yaml:"from"`
+	To      string		`yaml:"to"`
 }
  
 // Config Type

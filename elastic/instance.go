@@ -29,6 +29,7 @@ type Instance struct {
 	Timestamp 	string `json:"timestamp"`
 	Name 		string `json:"name"`
 	Downcount	int	   `json:"downcount"`
+	Mailed		bool    `json:"mailed"`
 }
 
 func (is *instances) AddInstance(i Instance) {
@@ -47,6 +48,7 @@ func createInstance(i Instance) *Instance {
 		Timestamp: utils.RFCtoKST(i.Timestamp),
 		Name : i.Name,
 		Downcount: 0,
+		Mailed: false,
 	}
 	return &newInstance
 }
