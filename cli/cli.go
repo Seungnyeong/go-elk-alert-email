@@ -9,10 +9,11 @@ import (
 )
 
 func usage() {
-	fmt.Printf("###### Welcome WKMS Alert ######\n")	
-	fmt.Printf("Please use the floowing flags:\n")
-	fmt.Printf("-port: Set the port of the swagger Server\n")
-	fmt.Printf("-yaml: Set the yaml file dir \n")
+	fmt.Printf("================================= [START] WKMS Alert =================================\n\n")	
+	fmt.Printf("\t해당 플래그로 Port 와 환경설정 파일의 경로를 지정할 수 있습니다.\n")
+	fmt.Printf("\t\t-port: 스웨거 기동 port\n")
+	fmt.Printf("\t\t-yaml: 환경설정 파일 \n\n")
+	fmt.Printf("=============================== Licenced by WMP CERT =================================\n")	
 }
 
 func Start() {

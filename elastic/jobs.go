@@ -26,7 +26,7 @@ func checkDowncount(key string) bool {
 	return down
 }
 
-func updateServerInfo(name string, c chan <- bool)  {
+func updateServerInfo(name string, c chan<- bool)  {
 	query := MakeServerMonitoringQuery(name)
 	response, err := SearchRestAPIResult(es.Client, &query, "wmp-wkms-health-*")
 	result := ParsingInstance(response)

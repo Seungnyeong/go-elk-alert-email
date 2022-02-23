@@ -65,6 +65,10 @@ func (i *Instance) UpdateIntanceDownCount(count int) {
 	i.Downcount = count
 }
 
+func (i *Instance) UpdateMailed() {
+	i.Mailed = !i.Mailed
+}
+
 func GetAllInstance(is *instances) map[string]*Instance {
 	return is.server
 }
