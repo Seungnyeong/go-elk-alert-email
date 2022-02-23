@@ -133,13 +133,13 @@ func GetUser(c echo.Context) error {
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   CERT팀 김승녕 매니저
-// @contact.url    http://stash.wemakeprice.com
+// @contact.url    https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse
 // @contact.email  seungnyeong@wemakeprice.com
 
 // @license.name  위메프 CERT팀 제공
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
+// @host      10.107.12.65:8081
 // @BasePath  /api/v1
 func SwaggerStart(port int) {
 	e := echo.New()

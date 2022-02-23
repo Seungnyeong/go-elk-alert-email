@@ -8,8 +8,6 @@ definitions:
         type: string
       ip:
         type: string
-      key:
-        type: string
       name:
         type: string
       port:
@@ -21,12 +19,12 @@ definitions:
       zone:
         type: string
     type: object
-host: localhost:8080
+host: 10.107.12.65:8081
 info:
   contact:
     email: seungnyeong@wemakeprice.com
     name: CERT팀 김승녕 매니저
-    url: http://stash.wemakeprice.com
+    url: https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse
   description: wkms alert 서버입니다.
   license:
     name: 위메프 CERT팀 제공
