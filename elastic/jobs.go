@@ -9,7 +9,7 @@ import (
 
 var ErrCannotExcute = errors.New("cannot excute job for cron")
 
-func CheckDowncount() bool {
+func checkDowncount() bool {
 	down := false
 	for _, server := range is.server {
 		if ( server.Downcount % 10 == 0) && server.Status == "down" {
@@ -25,36 +25,35 @@ func CheckDowncount() bool {
 	return down
 }
 
+func updateServerInfo(name string){
+	query := MakeServerMonitoringQuery(name)
+	response, err := SearchRestAPIResult(es.Client, &query, "wmp-wkms-health-*")
+	result := ParsingInstance(response)
+	utils.CheckError(err)
+	check , _ := GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port), is)
 
+	if check == nil {
+		is.AddInstance(result)		
+	} else {
+		i, err := GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port), is)
+		utils.CheckError(err)
+		i.UpdateIntance(result.Status, utils.RFCtoKST(result.Timestamp))
+	}
+}
 
 func Job(monitorId []string) error {
-	var errMsg string
 	if !checkSIEMStatus() {
-		errMsg = "cannot connect wmp-siem"
+		errMsg := "cannot connect wmp-siem"
+		return  errors.New(errMsg)
 	}
 
 	for _, name := range monitorId {
-		query := MakeServerMonitoringQuery(name)
-		response, err := SearchRestAPIResult(es.Client, &query, "wmp-wkms-health-*")
-		result := ParsingInstance(response)
-
-		if err != nil {
-			errMsg = err.Error()
-		}
-		check , _ := GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port), is)
-		if check == nil {
-			is.AddInstance(result)		
-		} else {
-			i, err := GetInstance(fmt.Sprintf("%s:%s", result.Ip, result.Port), is)
-			utils.CheckError(err)
-			i.UpdateIntance(result.Status, utils.RFCtoKST(result.Timestamp))
-		}
+		go updateServerInfo(name)
 	}
 	
-	if CheckDowncount() {
+	if checkDowncount() {
 		mail.SendMail(string(MakeTemplate()))
 	}
-	return errors.New(errMsg)
+
+	return nil
 }
-
-
