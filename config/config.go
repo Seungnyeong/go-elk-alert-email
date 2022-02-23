@@ -40,22 +40,23 @@ type Config struct {
 }
 
 var once sync.Once
-var p *Config
+var P *Config
 
-func Properties() *Config {
+func Init(path string) *Config {
 	once.Do(func() {
-		if p == nil {
-			p = new(Config)
-			filename, _ := filepath.Abs("properties.yaml")
+		if P == nil {
+			P = new(Config)
+			filename, _ := filepath.Abs(path)
 			yamFile, err := ioutil.ReadFile(filename)
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = yaml.Unmarshal(yamFile, &p)
+			err = yaml.Unmarshal(yamFile, &P)
 			if err != nil {
 				log.Fatalf("error : %v", err)
 			}
 		}
 	})
-	return p
+	return P
 }
+

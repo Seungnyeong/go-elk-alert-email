@@ -37,10 +37,10 @@ var errCannotFindUser = errors.New("there is NOT that user")
 
 func NewMysqlDatabase() *MysqlDatabase {
     var connectionString = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?allowNativePasswords=true", 
-		config.Properties().Database.User, 
-		config.Properties().Database.Password,
-		config.Properties().Database.Host, 
-		config.Properties().Database.Name,
+		config.P.Database.User, 
+		config.P.Database.Password,
+		config.P.Database.Host, 
+		config.P.Database.Name,
 	)
 	
 	client, err := sql.Open("mysql", connectionString)	

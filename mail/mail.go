@@ -28,14 +28,14 @@ func SendMail(html string){
 
 	buf := bytes.NewBufferString(subject + mimeString + html)
 	
-	c, err := smtp.Dial(config.Properties().Mail.Host)
+	c, err := smtp.Dial(config.P.Mail.Host)
 	if err != nil {
 		log.Panic("Error", err)
 	}
 	
 	defer c.Quit()
 	
-	if err := c.Mail(config.Properties().Mail.From); err != nil {
+	if err := c.Mail(config.P.Mail.From); err != nil {
 		log.Panic(err)
 	}
 

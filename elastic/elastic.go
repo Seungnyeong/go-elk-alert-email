@@ -25,13 +25,13 @@ type IElastic struct {
 func ElasticClient() *IElastic {
 	onceElastic.Do(func() {
 		if es == nil {
-			cert , err := utils.GetReadFile(config.Properties().Elastic.CertPath)
+			cert , err := utils.GetReadFile(config.P.Elastic.CertPath)
 			utils.CheckError(err)
 			es = &IElastic{
 				config: &elasticsearch.Config{
-					Addresses: config.Properties().Elastic.Hosts,
-					Username: config.Properties().Elastic.Username,
-					Password: config.Properties().Elastic.Password,
+					Addresses: config.P.Elastic.Hosts,
+					Username: config.P.Elastic.Username,
+					Password: config.P.Elastic.Password,
 					CACert: cert,
 				},
 			}
