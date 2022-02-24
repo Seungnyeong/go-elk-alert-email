@@ -101,11 +101,11 @@ const style string = `
 `
 
 func MakeTemplate(data interface{}) HTML {
-  instance := make(map[string]interface{})
-  t, _ := json.Marshal(data)
-  err := json.Unmarshal(t, &instance)
-  utils.CheckError(err)
-  
+	instance := make(map[string]interface{})
+	t, _ := json.Marshal(data)
+	err := json.Unmarshal(t, &instance)
+	utils.CheckError(err)
+
 	page :=
 		Html5_(
 			Head_(
@@ -130,14 +130,14 @@ func MakeTemplate(data interface{}) HTML {
 						),
 						Tbody_(
 							Tr_(
-                Td_(Text(instance["timestamp"])),
-                Td_(Text(instance["status"])),
-                Td_(Text(instance["name"])),
-                Td_(Text(instance["ip"])),
-                Td_(Text(instance["port"])),
-                Td_(Text(instance["zone"])),
-                Td_(Text(instance["hostname"])),
-	          	),
+								Td_(Text(instance["timestamp"])),
+								Td_(Text(instance["status"])),
+								Td_(Text(instance["name"])),
+								Td_(Text(instance["ip"])),
+								Td_(Text(instance["port"])),
+								Td_(Text(instance["zone"])),
+								Td_(Text(instance["hostname"])),
+							),
 						),
 					)),
 				A(Attr(a.Href("https://wmp-siem.wemakeprice.work/app/uptime?dateRangeStart=now-24h&dateRangeEnd=now")), Text("보안팀 SIEM UPTIME 이동")),

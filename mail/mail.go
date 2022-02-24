@@ -18,12 +18,12 @@ func SendMail(data interface{}, m chan<- bool) {
 	check := true
 	html := string(MakeTemplate(data))
 	users, err := service.NewUserRepository().FindAdminUser()
-	
+
 	if err != nil {
 		utils.CheckError(err)
 	}
 	buf := bytes.NewBufferString(subject + mimeString + html)
-		
+
 	c, err := smtp.Dial(config.P.Mail.Host)
 	if err != nil {
 		log.Panic("Error", err)
@@ -43,8 +43,8 @@ func SendMail(data interface{}, m chan<- bool) {
 			check = false
 		}
 	}
-	
-	wc , err := c.Data()
+
+	wc, err := c.Data()
 
 	if err != nil {
 		log.Panic(err)

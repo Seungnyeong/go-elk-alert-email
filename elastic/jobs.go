@@ -53,10 +53,10 @@ func Job(monitorId []string) error {
 	for _, name := range monitorId {
 		go updateServerInfo(name, c)
 
-		if i := <-c; (i.Status == "down" && i.Downcount%10 == 0 ) {
+		if i := <-c; i.Status == "down" && i.Downcount%10 == 0 {
 			if !i.Mailed {
 				t := make(chan bool)
-				go mail.SendMail(i, t)	
+				go mail.SendMail(i, t)
 				if <-t {
 					i.UpdateMailed()
 				}
