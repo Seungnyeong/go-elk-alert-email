@@ -33,10 +33,6 @@ type httpResponse struct {
 	Result     interface{} `json:"result,omitempty"`
 }
 
-type CustomContext struct {
-	echo.Context
-}
-
 // @Summary      Alerting 이 되고 있는 인스턴스 전체 확인.
 // @Description  현재 실행되고 있는 잡을 알수있음.
 // @Accept       json
