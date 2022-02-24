@@ -149,6 +149,9 @@ const docTemplate_swagger = `{
                 "ip": {
                     "type": "string"
                 },
+                "mailed": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -172,7 +175,7 @@ const docTemplate_swagger = `{
 // SwaggerInfo_swagger holds exported Swagger Info so clients can modify it
 var SwaggerInfo_swagger = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "10.107.12.65:8081",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "wkms-alert",

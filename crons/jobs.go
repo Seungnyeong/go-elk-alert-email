@@ -11,6 +11,7 @@ import (
 var ErrCannotFindIDs = errors.New("cannot Find Monitoring ID from you request")
 
 func MonitorInstanceJob(ipv4 string) error {
+	var err error
 	elastic.GetSingleton()
 	s := gocron.NewScheduler(time.UTC)
 	query := elastic.MakeServerGroupQuery(ipv4)
@@ -27,7 +28,7 @@ func MonitorInstanceJob(ipv4 string) error {
 	}
 
 	cr, err := s.SingletonMode().Every(5).Second().Do(func() {
-		elastic.Job(motoringIds)
+		err = elastic.Job(motoringIds)
 	})
 
 	if err != nil {

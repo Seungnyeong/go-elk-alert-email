@@ -32,9 +32,10 @@ type Instance struct {
 	Mailed    bool   `json:"mailed"`
 }
 
-func (is *instances) AddInstance(i Instance) {
+func (is *instances) AddInstance(i Instance) *Instance {
 	key := fmt.Sprintf("%s:%s", i.Ip, i.Port)
 	is.server[key] = createInstance(i)
+	return is.server[key]
 }
 
 func createInstance(i Instance) *Instance {

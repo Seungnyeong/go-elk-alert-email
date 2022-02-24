@@ -1,7 +1,12 @@
 package mail
 
 import (
-	"fmt"
+	"bytes"
+	"log"
+	"net/smtp"
+	"test/config"
+	"test/keyinfo/service"
+	"test/utils"
 )
 
 const (
@@ -9,33 +14,48 @@ const (
 	subject    string = "Subject: [중요] WKMS health check alert \n"
 )
 
-func SendMail(user_mail string, html string) {
+func SendMail(data interface{}, m chan<- bool) {
+	check := true
+	html := string(MakeTemplate(data))
+	users, err := service.NewUserRepository().FindAdminUser()
+	
+	if err != nil {
+		utils.CheckError(err)
+	}
+	buf := bytes.NewBufferString(subject + mimeString + html)
+		
+	c, err := smtp.Dial(config.P.Mail.Host)
+	if err != nil {
+		log.Panic("Error", err)
+		check = false
+	}
 
-	//buf := bytes.NewBufferString(subject + mimeString + html)
-	fmt.Println(user_mail)
-	// c, err := smtp.Dial(config.P.Mail.Host)
-	// if err != nil {
-	// 	log.Panic("Error", err)
-	// }
+	defer c.Quit()
 
-	// defer c.Quit()
+	if err := c.Mail(config.P.Mail.From); err != nil {
+		log.Panic(err)
+		check = false
+	}
 
-	// if err := c.Mail(config.P.Mail.From); err != nil {
-	// 	log.Panic(err)
-	// }
+	for _, user := range users {
+		if err := c.Rcpt(user.Email); err != nil {
+			log.Panic(err)
+			check = false
+		}
+	}
+	
+	wc , err := c.Data()
 
-	// if err := c.Rcpt(user_mail); err != nil {
-	// 	log.Panic(err)
-	// }
+	if err != nil {
+		log.Panic(err)
+		check = false
+	}
+	defer wc.Close()
 
-	// wc , err := c.Data()
-	// if err != nil {
-	// 	log.Panic(err)
-	// }
-	// defer wc.Close()
-
-	// if _, err = buf.WriteTo(wc); err != nil {
-	// 	log.Panic(err)
-	// }
+	if _, err = buf.WriteTo(wc); err != nil {
+		log.Panic(err)
+		check = false
+	}
+	m <- check
 
 }

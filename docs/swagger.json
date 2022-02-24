@@ -142,6 +142,9 @@
                 "ip": {
                     "type": "string"
                 },
+                "mailed": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
