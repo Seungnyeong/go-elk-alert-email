@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"os"
+	"path"
 	"time"
 )
 
@@ -42,4 +44,13 @@ func CheckIPAddress(ip string) bool {
 	} else {
 		return true
 	}
+}
+
+func GetBinPath() string {
+    e, err := os.Executable()
+    if err != nil {
+        panic(err)
+    }
+    path := path.Dir(e)
+    return path
 }

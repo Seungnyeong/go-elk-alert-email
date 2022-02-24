@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	if _ , err := os.Stat("logs"); err != nil {
+	path := utils.GetBinPath()
+	if _ , err := os.Stat(path + "/logs"); err != nil {
 		merr := os.MkdirAll("logs", os.ModePerm)
 		utils.CheckError(merr)
 	}
