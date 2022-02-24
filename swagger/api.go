@@ -158,14 +158,14 @@ func findOneUser(c echo.Context) error {
 func SwaggerStart(port int) {
 	path := utils.GetBinPath()
 	if _ , err := os.Stat(path + "/logs"); err != nil {
-		merr := os.MkdirAll("logs", os.ModePerm)
+		merr := os.MkdirAll(path + "/logs", os.ModePerm)
 		utils.CheckError(merr)
 	}
 	
 	e := echo.New()
 	logf, err := rotatelogs.New(
-    "logs/access.%Y%m%d.log",
-		rotatelogs.WithLinkName("logs/access_log.log"),
+    path+"/logs/access.%Y%m%d.log",
+		rotatelogs.WithLinkName(path+"logs/access_log.log"),
 		rotatelogs.WithMaxAge(24 * time.Hour),
 		rotatelogs.WithRotationTime(time.Hour),
 	)
