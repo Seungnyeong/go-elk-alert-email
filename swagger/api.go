@@ -3,6 +3,7 @@ package swagger
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"test/crons"
 	_ "test/docs"
 	"test/elastic"
@@ -155,6 +156,12 @@ func findOneUser(c echo.Context) error {
 // @host      10.107.12.65:8081
 // @BasePath  /api/v1
 func SwaggerStart(port int) {
+	path := utils.GetBinPath()
+	if _ , err := os.Stat(path + "/logs"); err != nil {
+		merr := os.MkdirAll("logs", os.ModePerm)
+		utils.CheckError(merr)
+	}
+	
 	e := echo.New()
 	logf, err := rotatelogs.New(
     "logs/access.%Y%m%d.log",
