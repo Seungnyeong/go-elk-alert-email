@@ -2,3 +2,4 @@
 /cert
 /template
 *.yaml
+/logs/*.log

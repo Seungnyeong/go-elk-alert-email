@@ -8,10 +8,13 @@ import (
 	"test/elastic"
 	"test/keyinfo/service"
 	"test/utils"
+	"time"
+
+	"log"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
@@ -28,6 +31,10 @@ type httpResponse struct {
 	TotalCount int         `json:"count,omitempty"`
 	Message    string      `json:"message"`
 	Result     interface{} `json:"result,omitempty"`
+}
+
+type CustomContext struct {
+	echo.Context
 }
 
 // @Summary      Alerting 이 되고 있는 인스턴스 전체 확인.
@@ -130,7 +137,7 @@ func findOneUser(c echo.Context) error {
 			Message: err.Error(),
 		}, indent)
 	}
-
+	
 	return c.JSONPretty(http.StatusOK, &httpResponse{
 		Message: string(Success),
 		Result:  user,
@@ -153,16 +160,32 @@ func findOneUser(c echo.Context) error {
 // @BasePath  /api/v1
 func SwaggerStart(port int) {
 	e := echo.New()
+	logf, err := rotatelogs.New(
+    "logs/access.%Y%m%d.log",
+		rotatelogs.WithLinkName("logs/access_log.log"),
+		rotatelogs.WithMaxAge(24 * time.Hour),
+		rotatelogs.WithRotationTime(time.Hour),
+	)
+
+	if err != nil {
+		log.Printf("failed to create rotatelogs: %s", err)
+		return
+	}
+	log.SetOutput(logf)
+
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: `{"time":"${time_rfc3339_nano}","id":"${id}","remote_ip":"${remote_ip}",` +
 			`"host":"${host}","method":"${method}","uri":"${uri}","user_agent":"${user_agent}",` +
 			`"status":${status},"error":"${error}","latency":${latency},"latency_human":"${latency_human}"` +
 			`}` + "\n",
+		Output: logf,
 	}))
+
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
 		StackSize: 1 << 10, // 1 KB
-		LogLevel:  log.ERROR,
+		LogLevel:  0,
 	}))
+
 	e.GET("/api/v1/job/instance", findRegisterdInstance)
 	e.GET("/api/v1/job/start", createJob)
 	e.GET("/api/v1/users/list", findAdminUserList)
