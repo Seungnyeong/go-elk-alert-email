@@ -30,14 +30,17 @@ type httpResponse struct {
 	Result     interface{} `json:"result,omitempty"`
 }
 
-// @Summary Get All Job
-// @Description 현재 실행되고 있는 잡을 알수있음.
-// @Accept json
-// @Produce json
-// @Success 200 {object} elastic.Instance
-// @Router /job/instance [get]
-// @Tags   스케줄
-func GetAllInstance(c echo.Context) error {
+// @Summary      Alerting 이 되고 있는 인스턴스 전체 확인.
+// @Description  현재 실행되고 있는 잡을 알수있음.
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  httpResponse
+// @Failure      400  {object}  httpResponse
+// @Failure      404  {object}  httpResponse
+// @Failure      500  {object}  httpResponse
+// @Router       /job/instance [get]
+// @Tags         스케줄
+func findRegisterdInstance(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	result := elastic.GetAllInstance(elastic.GetSingleton())
 	return c.JSONPretty(http.StatusOK, &httpResponse{
@@ -47,15 +50,18 @@ func GetAllInstance(c echo.Context) error {
 	}, indent)
 }
 
-// @Summary Job 스케줄 실행
-// @Description ipv4를 입력하세요
-// @Accept json
-// @Produce json
-// @Param ipv4 query string true "Start Cron Job"
-// @Success 200 {string} string "job ok"
-// @Router /job/start [get]
-// @Tags   스케줄
-func StartJob(c echo.Context) error {
+// @Summary      Alert Instance 등록
+// @Description  ipv4를 입력하세요
+// @Accept       json
+// @Produce      json
+// @Param        ipv4  query     string  true  "Start Cron Job"
+// @Success      200   {object}  httpResponse
+// @Failure      400   {object}  httpResponse
+// @Failure      404   {object}  httpResponse
+// @Failure      500   {object}  httpResponse
+// @Router       /job/start [get]
+// @Tags         스케줄
+func createJob(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	if c.QueryParams().Get("ipv4") != "" {
 		if !utils.CheckIPAddress(c.QueryParams().Get("ipv4")) {
@@ -80,14 +86,18 @@ func StartJob(c echo.Context) error {
 	}, indent)
 }
 
-// @Summary 관리자 전체 조회
-// @Description 관리자 전체 조회
-// @Accept json
-// @Produce json
-// @Success 200 {string} string "job ok"
-// @Router /users/list [get]
-// @Tags   계정
-func GetUserList(c echo.Context) error {
+// @Summary      WKMS 관리자 전체 조회
+// @Description  WKMS 관리자 전체 조회
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  httpResponse
+// @Success      200  {object}  httpResponse
+// @Failure      400  {object}  httpResponse
+// @Failure      404  {object}  httpResponse
+// @Failure      500  {object}  httpResponse
+// @Router       /users/list [get]
+// @Tags         계정
+func findAdminUserList(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	result, err := service.NewUserRepository().FindAdminUser()
 	if err != nil {
@@ -103,15 +113,15 @@ func GetUserList(c echo.Context) error {
 	}, indent)
 }
 
-// @Summary 사용자 조회
-// @Description username을 입력하세요
-// @Accept json
-// @Produce json
-// @Param username path string true "Get One User"
-// @Success 200 {string} string "job ok"
-// @Router /users/{username} [get]
-// @Tags   계정
-func GetUser(c echo.Context) error {
+// @Summary      사용자 조회
+// @Description  username을 입력하세요
+// @Accept       json
+// @Produce      json
+// @Param        username  path      string  true  "Get One User"
+// @Success      200       {object}  httpResponse
+// @Router       /users/{username} [get]
+// @Tags         계정
+func findOneUser(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	username := c.Param("username")
 	user, err := service.NewUserRepository().FindUser(username)
@@ -127,17 +137,17 @@ func GetUser(c echo.Context) error {
 	}, indent)
 }
 
-// @title           wkms-alert
+// @title           wkms-alert module
 // @version         1.0
-// @description     wkms alert 서버입니다.
-// @termsOfService  http://swagger.io/terms/
+// @description     wkms alert moddule
+// @termsOfService  https://confluence.wemakeprice.com/pages/viewpage.action?pageId=206230173
 
-// @contact.name   CERT팀 김승녕 매니저
-// @contact.url    https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse
-// @contact.email  seungnyeong@wemakeprice.com
+// @contact.name   보안기술실 메일 전송
+// @contact.url    
+// @contact.email  secutech@wemakeprice.com
 
 // @license.name  위메프 CERT팀 제공
-// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+// @license.url   https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse
 
 // @host      10.107.12.65:8081
 // @BasePath  /api/v1
@@ -153,10 +163,10 @@ func SwaggerStart(port int) {
 		StackSize: 1 << 10, // 1 KB
 		LogLevel:  log.ERROR,
 	}))
-	e.GET("/api/v1/job/instance", GetAllInstance)
-	e.GET("/api/v1/job/start", StartJob)
-	e.GET("/api/v1/users/list", GetUserList)
-	e.GET("/api/v1/users/:username", GetUser)
+	e.GET("/api/v1/job/instance", findRegisterdInstance)
+	e.GET("/api/v1/job/start", createJob)
+	e.GET("/api/v1/users/list", findAdminUserList)
+	e.GET("/api/v1/users/:username", findOneUser)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }

@@ -1,17 +1,16 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "wkms alert 서버입니다.",
-        "title": "wkms-alert",
-        "termsOfService": "http://swagger.io/terms/",
+        "description": "wkms alert moddule",
+        "title": "wkms-alert module",
+        "termsOfService": "https://confluence.wemakeprice.com/pages/viewpage.action?pageId=206230173",
         "contact": {
-            "name": "CERT팀 김승녕 매니저",
-            "url": "https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse",
-            "email": "seungnyeong@wemakeprice.com"
+            "name": "보안기술실 메일 전송",
+            "email": "secutech@wemakeprice.com"
         },
         "license": {
             "name": "위메프 CERT팀 제공",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "url": "https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse"
         },
         "version": "1.0"
     },
@@ -30,12 +29,30 @@
                 "tags": [
                     "스케줄"
                 ],
-                "summary": "Get All Job",
+                "summary": "Alerting 이 되고 있는 인스턴스 전체 확인.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/elastic.Instance"
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
                         }
                     }
                 }
@@ -53,7 +70,7 @@
                 "tags": [
                     "스케줄"
                 ],
-                "summary": "Job 스케줄 실행",
+                "summary": "Alert Instance 등록",
                 "parameters": [
                     {
                         "type": "string",
@@ -65,9 +82,27 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "job ok",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
                         }
                     }
                 }
@@ -75,7 +110,7 @@
         },
         "/users/list": {
             "get": {
-                "description": "관리자 전체 조회",
+                "description": "WKMS 관리자 전체 조회",
                 "consumes": [
                     "application/json"
                 ],
@@ -85,12 +120,30 @@
                 "tags": [
                     "계정"
                 ],
-                "summary": "관리자 전체 조회",
+                "summary": "WKMS 관리자 전체 조회",
                 "responses": {
                     "200": {
-                        "description": "job ok",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
                         }
                     }
                 }
@@ -120,9 +173,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "job ok",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/swagger.httpResponse"
                         }
                     }
                 }
@@ -130,36 +183,16 @@
         }
     },
     "definitions": {
-        "elastic.Instance": {
+        "swagger.httpResponse": {
             "type": "object",
             "properties": {
-                "downcount": {
+                "count": {
                     "type": "integer"
                 },
-                "hostname": {
+                "message": {
                     "type": "string"
                 },
-                "ip": {
-                    "type": "string"
-                },
-                "mailed": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "port": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                },
-                "zone": {
-                    "type": "string"
-                }
+                "result": {}
             }
         }
     }
