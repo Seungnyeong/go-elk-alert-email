@@ -38,6 +38,11 @@ func (is *instances) AddInstance(i Instance) *Instance {
 	return is.server[key]
 }
 
+func (is *instances) RemoveInstance(key string) map[string]*Instance {
+	delete(is.server, key)
+	return is.server
+}
+
 func createInstance(i Instance) *Instance {
 	newInstance := Instance{
 		Ip:        i.Ip,
@@ -116,3 +121,5 @@ func ParsingInstanceId(response map[string]interface{}) []string {
 	}
 	return motoringIds
 }
+
+

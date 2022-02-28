@@ -3,6 +3,7 @@ package swagger
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"test/crons"
 	_ "test/docs"
@@ -88,6 +89,36 @@ func createJob(c echo.Context) error {
 	return c.JSONPretty(http.StatusBadRequest, &httpResponse{
 		Message: "ipv4 cannot be null",
 	}, indent)
+}
+
+// @Summary      Alert Instance 삭제
+// @Description  key를 입력하세요
+// @Accept       json
+// @Produce      json
+// @Param        key    path     string  true  "Remove Instance"
+// @Success      200   {object}  httpResponse
+// @Failure      400   {object}  httpResponse
+// @Failure      404   {object}  httpResponse
+// @Failure      500   {object}  httpResponse
+// @Router       /job/delete/{key} [delete]
+// @Tags         스케줄
+func removeJobInstance(c echo.Context) error {
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+	key := c.Param("key")
+	decodedValue, err := url.QueryUnescape(key)
+	utils.CheckError(err)
+	i, _ := elastic.GetInstance(key, elastic.GetSingleton())
+	if i == nil {
+		return c.JSONPretty(http.StatusNotFound, &httpResponse{
+			Message: fmt.Sprintf("Cannot find %s instance", decodedValue),
+		}, indent)
+	}
+
+	result := elastic.GetSingleton().RemoveInstance(decodedValue)
+	return c.JSONPretty(http.StatusOK, &httpResponse{
+			Message: "Success",
+			Result:  result,
+		}, indent)
 }
 
 // @Summary      WKMS 관리자 전체 조회
@@ -190,6 +221,7 @@ func SwaggerStart(port int) {
 	}))
 
 	e.GET("/api/v1/job/instance", findRegisterdInstance)
+	e.DELETE("/api/v1/job/delete/:key", removeJobInstance)
 	e.GET("/api/v1/job/start", createJob)
 	e.GET("/api/v1/users/list", findAdminUserList)
 	e.GET("/api/v1/users/:username", findOneUser)

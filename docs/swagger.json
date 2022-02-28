@@ -17,6 +17,56 @@
     "host": "10.107.12.65:8081",
     "basePath": "/api/v1",
     "paths": {
+        "/job/delete/{key}": {
+            "delete": {
+                "description": "key를 입력하세요",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "스케줄"
+                ],
+                "summary": "Alert Instance 삭제",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Remove Instance",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.httpResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/job/instance": {
             "get": {
                 "description": "현재 실행되고 있는 잡을 알수있음.",

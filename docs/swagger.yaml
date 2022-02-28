@@ -21,6 +21,39 @@ info:
   title: wkms-alert module
   version: "1.0"
 paths:
+  /job/delete/{key}:
+    delete:
+      consumes:
+      - application/json
+      description: key를 입력하세요
+      parameters:
+      - description: Remove Instance
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.httpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.httpResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.httpResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/swagger.httpResponse'
+      summary: Alert Instance 삭제
+      tags:
+      - 스케줄
   /job/instance:
     get:
       consumes:
