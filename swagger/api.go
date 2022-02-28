@@ -107,7 +107,7 @@ func removeJobInstance(c echo.Context) error {
 	key := c.Param("key")
 	decodedValue, err := url.QueryUnescape(key)
 	utils.CheckError(err)
-	i, _ := elastic.GetInstance(key, elastic.GetSingleton())
+	i, _ := elastic.GetInstance(decodedValue, elastic.GetSingleton())
 	if i == nil {
 		return c.JSONPretty(http.StatusNotFound, &httpResponse{
 			Message: fmt.Sprintf("Cannot find %s instance", decodedValue),
