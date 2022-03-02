@@ -47,10 +47,10 @@ func CheckIPAddress(ip string) bool {
 }
 
 func GetBinPath() string {
-    e, err := os.Executable()
-    if err != nil {
-        panic(err)
-    }
-    path := path.Dir(e)
-    return path
+	e, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	path := path.Dir(e)
+	return path
 }

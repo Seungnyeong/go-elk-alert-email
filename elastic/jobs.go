@@ -4,54 +4,46 @@ import (
 	"errors"
 	"fmt"
 
+	"test/instances/instance"
+	inst "test/instances/service"
 	"test/mail"
 	"test/utils"
 )
 
-var ErrCannotExcute = errors.New("cannot excute job for cron")
-var c = make(chan *Instance)
+var (
+	ErrCannotExcute = errors.New("cannot excute job for cron")
+	c               = make(chan *instance.Instance)
+)
 
-func checkDowncount(key string) bool {
-	down := false
-
-	if is.server[key].Downcount%10 == 0 && is.server[key].Status == "down" {
-		down = true
-		is.server[key].UpdateIntanceDownCount(0)
-	}
-
-	if is.server[key].Downcount > 0 && is.server[key].Status == "up" {
-		is.server[key].UpdateIntanceDownCount(0)
-		is.server[key].Mailed = false
-	}
-
-	return down
+type JobRepository struct {
+	elk ElasticAccess
 }
 
-func updateServerInfo(name string, c chan<- *Instance) {
+func NewJob() *JobRepository {
+	return &JobRepository{Client()}
+}
+
+func (job JobRepository) updateServerInfo(name string, c chan<- *instance.Instance) {
 	query := MakeServerMonitoringQuery(name)
-	response, err := SearchRestAPIResult(es.Client, &query, "wmp-wkms-health-*")
+	response, err := job.elk.Search(&query, "wmp-wkms-health-*")
 	result := ParsingInstance(response)
 	key := fmt.Sprintf("%s:%s", result.Ip, result.Port)
 	utils.CheckError(err)
-	i, _ := GetInstance(key, is)
+	i, _ := inst.GetInstance(key)
 
 	if i == nil {
-		i = is.AddInstance(result)
+		i = inst.NewInstances().AddInstance(result)
 	} else {
 		utils.CheckError(err)
 		i.UpdateIntance(result.Status, utils.RFCtoKST(result.Timestamp))
 	}
-	checkDowncount(key)
+	inst.NewInstances().UpdateDownCount(key)
 	c <- i
 }
 
-func Job(monitorId []string) error {
-	if !checkSIEMStatus() {
-		errMsg := "cannot connect wmp-siem"
-		return errors.New(errMsg)
-	}
+func (job JobRepository) Job(monitorId []string) error {
 	for _, name := range monitorId {
-		go updateServerInfo(name, c)
+		go job.updateServerInfo(name, c)
 
 		if i := <-c; i.Status == "down" && i.Downcount%10 == 0 {
 			if !i.Mailed {

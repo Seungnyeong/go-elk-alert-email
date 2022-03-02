@@ -7,8 +7,8 @@ import (
 	"os"
 	"test/crons"
 	_ "test/docs"
-	"test/elastic"
-	"test/keyinfo/service"
+	inst "test/instances/service"
+	keyinfo "test/keyinfo/service"
 	"test/utils"
 	"time"
 
@@ -47,7 +47,8 @@ type httpResponse struct {
 // @Tags         스케줄
 func findRegisterdInstance(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	result := elastic.GetAllInstance(elastic.GetSingleton())
+	result := inst.NewInstances().GetAllInstance()
+
 	return c.JSONPretty(http.StatusOK, &httpResponse{
 		Message:    string(Success),
 		Result:     result,
@@ -107,18 +108,19 @@ func removeJobInstance(c echo.Context) error {
 	key := c.Param("key")
 	decodedValue, err := url.QueryUnescape(key)
 	utils.CheckError(err)
-	i, _ := elastic.GetInstance(decodedValue, elastic.GetSingleton())
+	i, _ := inst.GetInstance(decodedValue)
 	if i == nil {
 		return c.JSONPretty(http.StatusNotFound, &httpResponse{
 			Message: fmt.Sprintf("Cannot find %s instance", decodedValue),
 		}, indent)
 	}
 
-	result := elastic.GetSingleton().RemoveInstance(decodedValue)
+	inst.NewInstances().RemoveInstance(decodedValue)
+	utils.CheckError(err)
 	return c.JSONPretty(http.StatusOK, &httpResponse{
-			Message: "Success",
-			Result:  result,
-		}, indent)
+		Message: "Success",
+		Result:  inst.NewInstances().GetAllInstance(),
+	}, indent)
 }
 
 // @Summary      WKMS 관리자 전체 조회
@@ -134,7 +136,7 @@ func removeJobInstance(c echo.Context) error {
 // @Tags         계정
 func findAdminUserList(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	result, err := service.NewUserRepository().FindAdminUser()
+	result, err := keyinfo.NewUserRepository().FindAdminUser()
 	if err != nil {
 		return c.JSONPretty(http.StatusInternalServerError, &httpResponse{
 			Message: err.Error(),
@@ -159,13 +161,13 @@ func findAdminUserList(c echo.Context) error {
 func findOneUser(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 	username := c.Param("username")
-	user, err := service.NewUserRepository().FindUser(username)
+	user, err := keyinfo.NewUserRepository().FindUser(username)
 	if err != nil {
 		return c.JSONPretty(http.StatusOK, &httpResponse{
 			Message: err.Error(),
 		}, indent)
 	}
-	
+
 	return c.JSONPretty(http.StatusOK, &httpResponse{
 		Message: string(Success),
 		Result:  user,
@@ -178,7 +180,7 @@ func findOneUser(c echo.Context) error {
 // @termsOfService  https://confluence.wemakeprice.com/pages/viewpage.action?pageId=206230173
 
 // @contact.name   보안기술실 메일 전송
-// @contact.url    
+// @contact.url
 // @contact.email  secutech@wemakeprice.com
 
 // @license.name  위메프 CERT팀 제공
@@ -188,16 +190,16 @@ func findOneUser(c echo.Context) error {
 // @BasePath  /api/v1
 func SwaggerStart(port int) {
 	path := utils.GetBinPath()
-	if _ , err := os.Stat(path + "/logs"); err != nil {
-		merr := os.MkdirAll(path + "/logs", os.ModePerm)
+	if _, err := os.Stat(path + "/logs"); err != nil {
+		merr := os.MkdirAll(path+"/logs", os.ModePerm)
 		utils.CheckError(merr)
 	}
-	
+
 	e := echo.New()
 	logf, err := rotatelogs.New(
-    path+"/logs/access.%Y%m%d.log",
+		path+"/logs/access.%Y%m%d.log",
 		rotatelogs.WithLinkName(path+"logs/access_log.log"),
-		rotatelogs.WithMaxAge(24 * time.Hour),
+		rotatelogs.WithMaxAge(24*time.Hour),
 		rotatelogs.WithRotationTime(time.Hour),
 	)
 

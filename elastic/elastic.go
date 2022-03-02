@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"sync"
 	"test/config"
 	"test/utils"
 
@@ -15,31 +14,29 @@ import (
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 )
 
-var es *IElastic
-var onceElastic sync.Once
-
-type IElastic struct {
-	Client *elasticsearch.Client
+type Elastic struct {
+	client *elasticsearch.Client
 	config *elasticsearch.Config
 }
 
-func ElasticClient() *IElastic {
-	onceElastic.Do(func() {
-		if es == nil {
-			cert, err := utils.GetReadFile(config.P.Elastic.CertPath)
-			utils.CheckError(err)
-			es = &IElastic{
-				config: &elasticsearch.Config{
-					Addresses: config.P.Elastic.Hosts,
-					Username:  config.P.Elastic.Username,
-					Password:  config.P.Elastic.Password,
-					CACert:    cert,
-				},
-			}
-			es.Client, err = elasticsearch.NewClient(*es.config)
-			utils.CheckError(err)
-		}
-	})
+type ElasticAccess interface {
+	Search(query *bytes.Buffer, indexName string) (map[string]interface{}, error)
+	Status() bool
+}
+
+func Client() *Elastic {
+	cert, err := utils.GetReadFile(config.P.Elastic.CertPath)
+	utils.CheckError(err)
+	es := &Elastic{
+		config: &elasticsearch.Config{
+			Addresses: config.P.Elastic.Hosts,
+			Username:  config.P.Elastic.Username,
+			Password:  config.P.Elastic.Password,
+			CACert:    cert,
+		},
+	}
+	es.client, err = elasticsearch.NewClient(*es.config)
+	utils.CheckError(err)
 	return es
 }
 
@@ -107,9 +104,9 @@ func elasticError(res *esapi.Response) error {
 	return errors.New(errMsg)
 }
 
-func checkSIEMStatus() bool {
+func (es Elastic) Status() bool {
 	status := true
-	res, err := es.Client.Info()
+	res, err := es.client.Info()
 	utils.CheckError(err)
 	defer res.Body.Close()
 
@@ -121,14 +118,14 @@ func checkSIEMStatus() bool {
 	return status
 }
 
-func SearchRestAPIResult(es *elasticsearch.Client, query *bytes.Buffer, indexName string) (map[string]interface{}, error) {
+func (es Elastic) Search(query *bytes.Buffer, indexName string) (map[string]interface{}, error) {
 	var r map[string]interface{}
-	res, err := es.Search(
-		es.Search.WithContext(context.Background()),
-		es.Search.WithIndex(indexName),
-		es.Search.WithBody(query),
-		es.Search.WithTrackTotalHits(true),
-		es.Search.WithPretty(),
+	res, err := es.client.Search(
+		es.client.Search.WithContext(context.Background()),
+		es.client.Search.WithIndex(indexName),
+		es.client.Search.WithBody(query),
+		es.client.Search.WithTrackTotalHits(true),
+		es.client.Search.WithPretty(),
 	)
 	defer res.Body.Close()
 

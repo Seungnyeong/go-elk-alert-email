@@ -9,13 +9,19 @@ import (
 )
 
 var ErrCannotFindIDs = errors.New("cannot Find Monitoring ID from you request")
+var ErrSIEMConnect = errors.New("cannot Connect SIEM")
 
 func MonitorInstanceJob(ipv4 string) error {
 	var err error
-	elastic.GetSingleton()
 	s := gocron.NewScheduler(time.UTC)
+	status := elastic.Client().Status()
+
+	if !status {
+		return ErrSIEMConnect
+	}
+
 	query := elastic.MakeServerGroupQuery(ipv4)
-	response, err := elastic.SearchRestAPIResult(elastic.ElasticClient().Client, &query, "wmp-wkms-health-*")
+	response, err := elastic.Client().Search(&query, "wmp-wkms-health-*")
 
 	if err != nil {
 		return err
@@ -28,7 +34,7 @@ func MonitorInstanceJob(ipv4 string) error {
 	}
 
 	cr, err := s.SingletonMode().Every(5).Second().Do(func() {
-		err = elastic.Job(motoringIds)
+		err = elastic.NewJob().Job(motoringIds)
 	})
 
 	if err != nil {
