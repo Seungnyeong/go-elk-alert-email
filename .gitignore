@@ -3,3 +3,4 @@
 /template
 *.yaml
 /logs/*.log
+/required
