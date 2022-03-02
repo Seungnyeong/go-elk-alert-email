@@ -1,5 +1,10 @@
 basePath: /api/v1
 definitions:
+  swagger.Param:
+    properties:
+      ipv4:
+        type: string
+    type: object
   swagger.httpResponse:
     properties:
       count:
@@ -8,7 +13,7 @@ definitions:
         type: string
       result: {}
     type: object
-host: 10.107.12.65:8081
+host: localhost:8080
 info:
   contact:
     email: secutech@wemakeprice.com
@@ -54,7 +59,7 @@ paths:
       summary: Alert Instance 삭제
       tags:
       - 스케줄
-  /job/instance:
+  /job/list:
     get:
       consumes:
       - application/json
@@ -82,16 +87,17 @@ paths:
       tags:
       - 스케줄
   /job/start:
-    get:
+    post:
       consumes:
       - application/json
       description: ipv4를 입력하세요
       parameters:
-      - description: Start Cron Job
-        in: query
-        name: ipv4
+      - description: Alerting 설정할 인스턴스 ipv4를 입력하세요
+        in: body
+        name: data
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/swagger.Param'
       produces:
       - application/json
       responses:

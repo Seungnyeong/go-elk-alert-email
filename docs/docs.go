@@ -74,7 +74,7 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "/job/instance": {
+        "/job/list": {
             "get": {
                 "description": "현재 실행되고 있는 잡을 알수있음.",
                 "consumes": [
@@ -116,7 +116,7 @@ const docTemplate_swagger = `{
             }
         },
         "/job/start": {
-            "get": {
+            "post": {
                 "description": "ipv4를 입력하세요",
                 "consumes": [
                     "application/json"
@@ -130,11 +130,13 @@ const docTemplate_swagger = `{
                 "summary": "Alert Instance 등록",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Start Cron Job",
-                        "name": "ipv4",
-                        "in": "query",
-                        "required": true
+                        "description": "Alerting 설정할 인스턴스 ipv4를 입력하세요",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/swagger.Param"
+                        }
                     }
                 ],
                 "responses": {
@@ -240,6 +242,14 @@ const docTemplate_swagger = `{
         }
     },
     "definitions": {
+        "swagger.Param": {
+            "type": "object",
+            "properties": {
+                "ipv4": {
+                    "type": "string"
+                }
+            }
+        },
         "swagger.httpResponse": {
             "type": "object",
             "properties": {
@@ -258,7 +268,7 @@ const docTemplate_swagger = `{
 // SwaggerInfo_swagger holds exported Swagger Info so clients can modify it
 var SwaggerInfo_swagger = &swag.Spec{
 	Version:          "1.0",
-	Host:             "10.107.12.65:8081",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "wkms-alert module",

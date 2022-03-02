@@ -28,7 +28,7 @@ func MonitorInstanceJob(ipv4 string) error {
 	}
 
 	motoringIds := elastic.ParsingInstanceId(response)
-
+	
 	if !(len(motoringIds) > 0) {
 		return ErrCannotFindIDs
 	}

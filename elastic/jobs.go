@@ -29,7 +29,7 @@ func (job JobRepository) updateServerInfo(name string, c chan<- *instance.Instan
 	result := ParsingInstance(response)
 	key := fmt.Sprintf("%s:%s", result.Ip, result.Port)
 	utils.CheckError(err)
-	i, _ := inst.GetInstance(key)
+	i, _ := inst.NewInstances().GetInstance(key)
 
 	if i == nil {
 		i = inst.NewInstances().AddInstance(result)

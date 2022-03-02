@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "host": "10.107.12.65:8081",
+    "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
         "/job/delete/{key}": {
@@ -67,7 +67,7 @@
                 }
             }
         },
-        "/job/instance": {
+        "/job/list": {
             "get": {
                 "description": "현재 실행되고 있는 잡을 알수있음.",
                 "consumes": [
@@ -109,7 +109,7 @@
             }
         },
         "/job/start": {
-            "get": {
+            "post": {
                 "description": "ipv4를 입력하세요",
                 "consumes": [
                     "application/json"
@@ -123,11 +123,13 @@
                 "summary": "Alert Instance 등록",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Start Cron Job",
-                        "name": "ipv4",
-                        "in": "query",
-                        "required": true
+                        "description": "Alerting 설정할 인스턴스 ipv4를 입력하세요",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/swagger.Param"
+                        }
                     }
                 ],
                 "responses": {
@@ -233,6 +235,14 @@
         }
     },
     "definitions": {
+        "swagger.Param": {
+            "type": "object",
+            "properties": {
+                "ipv4": {
+                    "type": "string"
+                }
+            }
+        },
         "swagger.httpResponse": {
             "type": "object",
             "properties": {

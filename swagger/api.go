@@ -35,6 +35,10 @@ type httpResponse struct {
 	Result     interface{} `json:"result,omitempty"`
 }
 
+type Param struct {
+	Ipv4 string `json:"ipv4"`
+}
+
 // @Summary      Alerting 이 되고 있는 인스턴스 전체 확인.
 // @Description  현재 실행되고 있는 잡을 알수있음.
 // @Accept       json
@@ -43,7 +47,7 @@ type httpResponse struct {
 // @Failure      400  {object}  httpResponse
 // @Failure      404  {object}  httpResponse
 // @Failure      500  {object}  httpResponse
-// @Router       /job/instance [get]
+// @Router       /job/list [get]
 // @Tags         스케줄
 func findRegisterdInstance(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
@@ -60,23 +64,31 @@ func findRegisterdInstance(c echo.Context) error {
 // @Description  ipv4를 입력하세요
 // @Accept       json
 // @Produce      json
-// @Param        ipv4  query     string  true  "Start Cron Job"
+// @Param        data body Param true "Alerting 설정할 인스턴스 ipv4를 입력하세요"
 // @Success      200   {object}  httpResponse
 // @Failure      400   {object}  httpResponse
 // @Failure      404   {object}  httpResponse
 // @Failure      500   {object}  httpResponse
-// @Router       /job/start [get]
+// @Router       /job/start [post]
 // @Tags         스케줄
 func createJob(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	if c.QueryParams().Get("ipv4") != "" {
-		if !utils.CheckIPAddress(c.QueryParams().Get("ipv4")) {
+	params := make(map[string]string)
+	err := c.Bind(&params)
+	if err != nil {
+		return c.JSONPretty(http.StatusBadRequest, &httpResponse{
+		Message: err.Error(),
+		}, indent)
+	}
+
+	if params["ipv4"] != "" {
+		if !utils.CheckIPAddress(params["ipv4"]) {
 			return c.JSONPretty(http.StatusBadRequest, &httpResponse{
-				Message: fmt.Sprintf("%s is not formatted ipv4", c.QueryParams().Get("ipv4")),
+				Message: fmt.Sprintf("%s is not formatted ipv4", params["ipv4"]),
 			}, indent)
 		}
 
-		err := crons.MonitorInstanceJob(c.QueryParams().Get("ipv4"))
+		err := crons.MonitorInstanceJob(params["ipv4"])
 		if err != nil {
 			return c.JSONPretty(http.StatusBadRequest, &httpResponse{
 				Message: err.Error(),
@@ -84,7 +96,7 @@ func createJob(c echo.Context) error {
 		}
 		return c.JSONPretty(http.StatusOK, &httpResponse{
 			Message: "Success",
-			Result:  fmt.Sprintf("Start the schedule for instances included in the %s server.", c.QueryParams().Get("ipv4")),
+			Result:  fmt.Sprintf("Start the schedule for instances included in the %s server.", params["ipv4"]),
 		}, indent)
 	}
 	return c.JSONPretty(http.StatusBadRequest, &httpResponse{
@@ -108,7 +120,7 @@ func removeJobInstance(c echo.Context) error {
 	key := c.Param("key")
 	decodedValue, err := url.QueryUnescape(key)
 	utils.CheckError(err)
-	i, _ := inst.GetInstance(decodedValue)
+	i, _ := inst.NewInstances().GetInstance(decodedValue)
 	if i == nil {
 		return c.JSONPretty(http.StatusNotFound, &httpResponse{
 			Message: fmt.Sprintf("Cannot find %s instance", decodedValue),
@@ -186,7 +198,7 @@ func findOneUser(c echo.Context) error {
 // @license.name  위메프 CERT팀 제공
 // @license.url   https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse
 
-// @host      10.107.12.65:8081
+// @host      localhost:8080
 // @BasePath  /api/v1
 func SwaggerStart(port int) {
 	path := utils.GetBinPath()
@@ -222,9 +234,9 @@ func SwaggerStart(port int) {
 		LogLevel:  0,
 	}))
 
-	e.GET("/api/v1/job/instance", findRegisterdInstance)
+	e.GET("/api/v1/job/list", findRegisterdInstance)
 	e.DELETE("/api/v1/job/delete/:key", removeJobInstance)
-	e.GET("/api/v1/job/start", createJob)
+	e.POST("/api/v1/job/start", createJob)
 	e.GET("/api/v1/users/list", findAdminUserList)
 	e.GET("/api/v1/users/:username", findOneUser)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)

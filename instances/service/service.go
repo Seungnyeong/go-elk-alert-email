@@ -45,7 +45,7 @@ func (is *instances) GetAllInstance() map[string]*instance.Instance {
 	return is.server
 }
 
-func GetInstance(key string) (*instance.Instance, error) {
+func (is *instances) GetInstance(key string) (*instance.Instance, error) {
 	server, ok := is.server[key]
 	if !ok {
 		return nil, ErrNotFound
