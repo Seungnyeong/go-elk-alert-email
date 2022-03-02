@@ -198,7 +198,7 @@ func findOneUser(c echo.Context) error {
 // @license.name  위메프 CERT팀 제공
 // @license.url   https://stash.wemakeprice.com/projects/SECUTECH/repos/wkms-alert/browse
 
-// @host      localhost:8080
+// @host      10.107.12.65:8081
 // @BasePath  /api/v1
 func SwaggerStart(port int) {
 	path := utils.GetBinPath()
