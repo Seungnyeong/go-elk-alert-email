@@ -67,7 +67,7 @@ func MakeServerGroupQuery(ipv4 string) bytes.Buffer {
 		"range": map[string]interface{}{
 			"@timestamp": map[string]interface{}{
 				"gte":       "now-1d/d",
-				"lt":        "now/d",
+				"lte":        "now/d",
 				"time_zone": "+09:00",
 			},
 		},
