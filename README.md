@@ -1,6 +1,5 @@
-# WKMS Alert
+# ELK Alert
 
-- 개발서버 : 10.107.12.65 (dev)
 - go version : 1.17.5
 - framework : echo
 
@@ -8,11 +7,15 @@
 
 > 실행 명령 go run main.go
 
-> cli 
-cli 명령 실행 패키지
-config  
-> sdf
-> sdf
-> sd
-> fdsf
-> 
+1. cli package : application run command
+2. config package : get environment from properties.yaml
+3. crons : crontab schedule package
+4. docs  : swagger docs static files
+5. elasic : main business logic
+6. instance : how to management instance object for alerting
+7. keyinfo : get db data
+8. swagger : swagger settings
+9. mail : mailling package
+10. utils : common 
+
+written by : seungnyeong kim
