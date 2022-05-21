@@ -5,6 +5,7 @@ import (
 	"log"
 	"path/filepath"
 	"sync"
+	"test/utils"
 
 	"gopkg.in/yaml.v2"
 )
@@ -53,9 +54,7 @@ func Init(path string) *Config {
 				log.Fatal(err)
 			}
 			err = yaml.Unmarshal(yamFile, &P)
-			if err != nil {
-				log.Fatalf("error : %v", err)
-			}
+			utils.CheckError(err)
 		}
 	})
 	return P

@@ -24,5 +24,5 @@ func Start() {
 	yaml := flag.String("yaml", "properties.yaml", "set Yaml Dir of the server")
 	flag.Parse()
 	config.Init(*yaml)
-	swagger.SwaggerStart(*port)
+	swagger.Start(*port)
 }

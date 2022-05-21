@@ -200,7 +200,7 @@ func findOneUser(c echo.Context) error {
 
 // @host      10.107.12.65:8081
 // @BasePath  /api/v1
-func SwaggerStart(port int) {
+func Start(port int) {
 	path := utils.GetBinPath()
 	if _, err := os.Stat(path + "/logs"); err != nil {
 		merr := os.MkdirAll(path+"/logs", os.ModePerm)
