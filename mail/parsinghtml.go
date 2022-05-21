@@ -140,8 +140,8 @@ func MakeTemplate(data interface{}) HTML {
 							),
 						),
 					)),
-				A(Attr(a.Href("https://wmp-siem.wemakeprice.work/app/uptime?dateRangeStart=now-24h&dateRangeEnd=now")), Text("보안팀 SIEM UPTIME 이동")),
-				A(Attr(a.Href("http://10.102.181.45:9000/")), Text("보안팀 Jenkins 이동")),
+				A(Attr(a.Href("*******/app/uptime?dateRangeStart=now-24h&dateRangeEnd=now")), Text(" SIEM UPTIME 이동")),
+				A(Attr(a.Href("http://*****:******/")), Text(" Jenkins 이동")),
 			),
 			Style_(Text(style)),
 		)
